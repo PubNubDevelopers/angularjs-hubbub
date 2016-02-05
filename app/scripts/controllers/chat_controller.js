@@ -14,6 +14,21 @@ angular.module('app')
         subscribe_key: 'sub-c-204f063e-c559-11e5-b764-02ee2ddab7fe',
         uuid: $scope.uuid
     });
+
+    // Fetching the messages history
+    // Don't forget to activate the history in your PubNub app in the developer portal.
+    Pubnub.history({
+     channel: $scope.channel,
+     callback: function(m){ 
+      $scope.$apply(function () { 
+        $scope.messages = m[0] ; 
+      });
+      $scope.scrollDown(0);
+     },
+     count: 50,
+     reverse: false
+    });
+
   
     // Fetching a uniq random avatar from the robohash.org service.
     $scope.avatarUrl = function(uuid) {
