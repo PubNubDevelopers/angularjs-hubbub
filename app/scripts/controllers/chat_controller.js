@@ -1,19 +1,14 @@
 'use strict';
 
 angular.module('app')
-.controller('ChatCtrl', ['$scope', 'Pubnub', function($scope, Pubnub) {
+.controller('ChatCtrl', ['$scope', 'Pubnub','currentUser', function($scope, Pubnub, currentUser) {
+
     $scope.messages = [];
     $scope.channel = 'messages-channel';
 
     $scope.messageContent = '';
-    // Generating a random uuid between 1 and 100 using utility function from lodash library.
-    $scope.uuid = _.random(1000000).toString();
-
-    Pubnub.init({
-        publish_key: 'pub-c-a1cd7ac1-585e-478e-925b-65d17ce62f7d',
-        subscribe_key: 'sub-c-204f063e-c559-11e5-b764-02ee2ddab7fe',
-        uuid: $scope.uuid
-    });
+    
+    $scope.uuid = currentUser.getUuid();
 
     // Fetching the messages history
     // Don't forget to activate the history in your PubNub app in the developer portal.
