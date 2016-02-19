@@ -13,9 +13,8 @@ angular.module('app')
   }
 
   var newMessage = function(m){
-      $rootScope.$apply(function() {
-        self.messages.push(m)
-      })
+    self.messages.push(m)
+    $rootScope.$digest()
   }
 
   var fetchMessages = function() {
@@ -24,9 +23,8 @@ angular.module('app')
     Pubnub.history({
      channel: self.channel,
      callback: function(m){ 
-        $rootScope.$apply(function() {
-          self.messages = m[0] ; 
-        })
+        angular.extend(self.messages, m[0]);
+        $rootScope.$digest()
      },
      count: 50,
      reverse: false

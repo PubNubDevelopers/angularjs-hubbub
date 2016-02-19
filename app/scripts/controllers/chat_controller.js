@@ -3,12 +3,7 @@
 angular.module('app')
 .controller('ChatCtrl', ['$scope', 'Pubnub','currentUser', 'MessageService', function($scope, Pubnub, currentUser, MessageService) {
 
-    $scope.messages = [];
-
-    $scope.$watch(function () { return MessageService.getMessages() }, function (messages) {
-                    $scope.messages = messages;
-                  }, true
-                );
+    $scope.messages = MessageService.getMessages();
 
     $scope.messageContent = '';
     
