@@ -1,26 +1,4 @@
-<ul class="collection">
- <li class="collection-item avatar single-message" ng-repeat="message in messages">
-   <img src="{{avatarUrl(message.sender_uuid)}}" alt="{{message.sender_uuid}}" class="circle">
-   <span class="title">Anonymous robot #{{ message.sender_uuid }}</span>
-   <p><i class="prefix mdi-action-alarm"></i> {{ message.date | date:"MM/dd/yyyy 'at' h:mma"}}</br> {{ message.content }}</p>
- </li>
-</ul> 
+<message-list messages=messages></message-list>
 <footer class="teal">
- <form ng-submit="sendMessage()" class="container">
-   <div class="row">
-     <div class="input-field col s10">
-       <i class="prefix mdi-communication-chat"></i>
-       <input ng-model="messageContent" type="text" placeholder="Type your message" >
-       <span class="chip left">
-         <img src="{{avatarUrl(uuid)}}">
-        Anonymous robot #{{uuid}}
-       </span>
-     </div>
-     <div class="input-field col s2">
-       <button type="submit" class="waves-effect waves-light btn-floating btn-large">
-         <i class="mdi-content-send"></i>
-       </button>
-     </div>
-   </div>
-  </form>
+  <message-form></message-form>
 </footer>
