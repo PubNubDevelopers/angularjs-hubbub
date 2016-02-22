@@ -1,4 +1,4 @@
-angular.module('app').directive('messageList', function($timeout,MessageService) {
+angular.module('app').directive('messageList', function($timeout, $anchorScroll, MessageService) {
   return {
     restrict: "E",
     replace: true,
@@ -28,7 +28,14 @@ angular.module('app').directive('messageList', function($timeout,MessageService)
         var previousValue = scope.autoScrollDown;
         var newValue = scrollReachedBottom();
         if(scrollReachedTop()){
+          
+          var currentMessageId = MessageService.getMessages()[0].uuid
           MessageService.fetchPreviousMessages();
+          // Should be replaced by a promise
+          $timeout(function(){
+            $anchorScroll(currentMessageId);
+          }, 400);
+          
         }
 
         // Update the autoScrollDown value if it has changed

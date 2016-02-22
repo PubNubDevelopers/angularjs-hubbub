@@ -14,11 +14,6 @@ angular.module('app')
     $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel), callback);
   };
 
-  // Retrieve the timestamp of the first message
-  self.getTimeStampFirstMessage = function(){
-    return self.messages[0].date * Math.pow(10, 4);
-  };
-
   var init = function() {
       Pubnub.subscribe({
           channel: self.channel,
@@ -61,7 +56,7 @@ angular.module('app')
         Array.prototype.unshift.apply(self.messages,m[0])
         $rootScope.$digest()
      },
-     count: 20,
+     count: 10,
      start: self.timeTokenFirstMessage,
      reverse: false
     });
@@ -88,6 +83,7 @@ angular.module('app')
         Pubnub.publish({
             channel: self.channel,
             message: {
+                uuid: (Date.now() + currentUser.getUuid()),
                 content: messageContent,
                 sender_uuid: currentUser.getUuid(),
                 date: Date.now()
