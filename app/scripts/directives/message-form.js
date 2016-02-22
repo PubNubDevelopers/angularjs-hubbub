@@ -1,6 +1,7 @@
 angular.module('app').directive('messageForm', function() {
   return {
     restrict: "E",
+    replace: true,
     templateUrl: '/templates/directives/message-form.html',
     scope: {},
     
