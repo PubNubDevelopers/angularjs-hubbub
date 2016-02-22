@@ -1,5 +1,5 @@
 <ul class="message-list collection">
   <li class="collection-item message-item avatar" ng-repeat="message in messages">
-    <message-item content="{{message.content}}" sender-uuid="{{message.sender_uuid}}" date="{{message.date}}"></message-item>
+    <message-item id="{{message.uuid}}" content="{{message.content}}" sender-uuid="{{message.sender_uuid}}" date="{{message.date}}"></message-item>
   </li>
 </ul> 
