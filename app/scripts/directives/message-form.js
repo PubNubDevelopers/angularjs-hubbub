@@ -7,7 +7,7 @@ angular.module('app').directive('messageForm', function() {
     
     controller: function($scope, currentUser, MessageService){
 
-      $scope.uuid = currentUser.getUuid();
+      $scope.uuid = currentUser;
       $scope.messageContent = '';
 
       $scope.sendMessage = function(){
