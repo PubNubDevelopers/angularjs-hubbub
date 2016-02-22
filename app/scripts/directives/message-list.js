@@ -18,10 +18,18 @@ angular.module('app').directive('messageList', function($timeout,MessageService)
         return $(element).scrollTop() + $(element).innerHeight() >= $(element)[0].scrollHeight
       }
 
+      var scrollReachedTop = function(){
+        element = angular.element(element)
+        return $(element).scrollTop() === 0 ;
+      }
+
       var updateScrollStatus = function() {
 
         var previousValue = scope.autoScrollDown;
         var newValue = scrollReachedBottom();
+        if(scrollReachedTop()){
+          MessageService.fetchPreviousMessages();
+        }
 
         // Update the autoScrollDown value if it has changed
         if (newValue != previousValue){

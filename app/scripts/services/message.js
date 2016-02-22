@@ -3,11 +3,20 @@ angular.module('app')
   
   var self = this;
   this.messages = []
-  this.channel = 'messages-channel';
+  this.channel = 'messages-channel4';
+
+  // Represent the timetoken of the first message for knowing 
+  // which data has already been saved
+  this.firstMessageTimeToken = null;
 
   ////// NOTIFICATION FUNCTIONS
   var subcribeNewMessage = function(callback){
     $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel), callback);
+  };
+
+  // Retrieve the timestamp of the first message
+  self.getTimeStampFirstMessage = function(){
+    return self.messages[0].date * Math.pow(10, 4);
   };
 
   var init = function() {
@@ -15,6 +24,10 @@ angular.module('app')
           channel: self.channel,
           triggerEvents: ['callback']
       });
+      Pubnub.time(function(time){
+        this.firstMessageTimeToken = time;
+      })
+
   }
 
   subcribeNewMessage(function(ngEvent,m){
@@ -28,13 +41,31 @@ angular.module('app')
     Pubnub.history({
      channel: self.channel,
      callback: function(m){ 
+        // Update timetoken of the first message
+        self.timeTokenFirstMessage = m[1]
         angular.extend(self.messages, m[0]);
         $rootScope.$digest()
      },
-     count: 50,
+     count: 20,
      reverse: false
     });
   }
+
+  var fetchPreviousMessages = function(){
+
+    Pubnub.history({
+     channel: self.channel,
+     callback: function(m){ 
+        // Update timetoken of the first message
+        self.timeTokenFirstMessage = m[1]
+        Array.prototype.unshift.apply(self.messages,m[0])
+        $rootScope.$digest()
+     },
+     count: 20,
+     start: self.timeTokenFirstMessage,
+     reverse: false
+    });
+  };
 
   init();
 
@@ -59,7 +90,7 @@ angular.module('app')
             message: {
                 content: messageContent,
                 sender_uuid: currentUser.getUuid(),
-                date: new Date()
+                date: Date.now()
             },
             callback: function(m) {
                 console.log(m);
@@ -72,7 +103,8 @@ angular.module('app')
   return {
     getMessages: getMessages, 
     sendMessage: sendMessage,
-    subscribeNewMessage: subcribeNewMessage
+    subscribeNewMessage: subcribeNewMessage,
+    fetchPreviousMessages: fetchPreviousMessages
   } 
 
 }]);
