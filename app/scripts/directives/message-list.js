@@ -13,12 +13,12 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
           list.scrollTop = list.scrollHeight;
         };
 
-      var scrollReachedBottom = function(){
+      var hasScrollReachedBottom = function(){
         element = angular.element(element)
         return $(element).scrollTop() + $(element).innerHeight() >= $(element)[0].scrollHeight
       }
 
-      var scrollReachedTop = function(){
+      var hasScrollReachedTop = function(){
         element = angular.element(element)
         return $(element).scrollTop() === 0 ;
       }
@@ -26,8 +26,8 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
       var updateScrollStatus = function() {
 
         var previousValue = scope.autoScrollDown;
-        var newValue = scrollReachedBottom();
-        if(scrollReachedTop()){
+        var newValue = hasScrollReachedBottom();
+        if(hasScrollReachedTop()){
           
           var currentMessageId = MessageService.getMessages()[0].uuid
           MessageService.fetchPreviousMessages();
