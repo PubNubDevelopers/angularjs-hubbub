@@ -1,4 +1,4 @@
-angular.module('app').directive('messageList', function($timeout) {
+angular.module('app').directive('messageList', function($timeout,MessageService) {
   return {
     restrict: "E",
     replace: true,
@@ -31,11 +31,17 @@ angular.module('app').directive('messageList', function($timeout) {
       };
 
       // Scroll down when the list is rendered
-      $timeout(scrollToBottom, 5);
+      $timeout(scrollToBottom, 400);
 
       // Check where the scroll is on the list
        angular.element(element).bind("scroll", updateScrollStatus);
 
+      // Scroll down when new message
+      MessageService.subscribeNewMessage(function(){
+        if(scope.autoScrollDown){
+          scrollToBottom()
+        }
+      });
 
     },
     controller: function($scope){

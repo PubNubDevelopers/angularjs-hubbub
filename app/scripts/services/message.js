@@ -5,17 +5,22 @@ angular.module('app')
   this.messages = []
   this.channel = 'messages-channel';
 
+  ////// NOTIFICATION FUNCTIONS
+  var subcribeNewMessage = function(callback){
+    $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel), callback);
+  };
+
   var init = function() {
       Pubnub.subscribe({
           channel: self.channel,
-          message: newMessage 
+          triggerEvents: ['callback']
       });
   }
 
-  var newMessage = function(m){
+  subcribeNewMessage(function(ngEvent,m){
     self.messages.push(m)
     $rootScope.$digest()
-  }
+  });
 
   var fetchMessages = function() {
     // Fetching the messages history
@@ -62,10 +67,12 @@ angular.module('app')
         });
   }
 
+
   // The public API interface
   return {
     getMessages: getMessages, 
-    sendMessage: sendMessage
+    sendMessage: sendMessage,
+    subscribeNewMessage: subcribeNewMessage
   } 
 
 }]);
