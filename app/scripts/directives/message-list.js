@@ -1,4 +1,4 @@
-angular.module('app').directive('messageList', function($timeout, $anchorScroll, MessageService) {
+angular.module('app').directive('messageList', function($timeout, $anchorScroll, MessageService, ngNotify) {
   return {
     restrict: "E",
     replace: true,
@@ -27,11 +27,13 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
 
         var previousValue = scope.autoScrollDown;
         var newValue = hasScrollReachedBottom();
+
         if(hasScrollReachedTop()){
           
           var currentMessageId = MessageService.getMessages()[0].uuid
           MessageService.fetchPreviousMessages();
-          // Should be replaced by a promise
+          ngNotify.set('Loading previous messages...');
+          // Should be replaced by a promise !
           $timeout(function(){
             $anchorScroll(currentMessageId);
           }, 400);
