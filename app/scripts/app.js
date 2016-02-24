@@ -36,11 +36,7 @@ angular
       ngNotify.config({
           theme: 'paster',
           position: 'top',
-          duration: 200,
-          type: 'success',
-          sticky: false,
-          button: false,
-          html: false
+          duration: 250
       });
 
   }]);
