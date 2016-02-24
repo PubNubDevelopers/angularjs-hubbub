@@ -2,7 +2,7 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
   return {
     restrict: "E",
     replace: true,
-    templateUrl: '/templates/directives/message-list.html',
+    templateUrl: 'components/message-list/message-list.html',
     scope: {
       messages: "=",
     },
@@ -83,6 +83,8 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
       $scope.autoScrollDown = true;
       // Indicates wether all the messages have been fetched or not.
       $scope.messagesAllFetched = false;
+      
+      $scope.messages = MessageService.getMessages();
     }
   };
 });
