@@ -6,10 +6,6 @@ angular.module('app').directive('messageItem', function(MessageService) {
       senderUuid: "@",
       content: "@",
       date: "@"
-    },
-    link: function(scope, element, attrs, ctrl) {
-      
     }
-
   };
 });
