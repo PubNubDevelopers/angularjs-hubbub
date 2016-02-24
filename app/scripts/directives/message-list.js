@@ -31,13 +31,12 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
         if(hasScrollReachedTop()){
           
           var currentMessageId = MessageService.getMessages()[0].uuid
-          MessageService.fetchPreviousMessages();
           ngNotify.set('Loading previous messages...');
-          // Should be replaced by a promise !
-          $timeout(function(){
-            $anchorScroll(currentMessageId);
-          }, 400);
-          
+
+          MessageService.fetchPreviousMessages().then(function(messages){
+              $anchorScroll(currentMessageId);
+          });
+
         }
 
         // Update the autoScrollDown value if it has changed

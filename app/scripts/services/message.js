@@ -1,5 +1,5 @@
 angular.module('app')
-.factory('MessageService', ['$rootScope','Pubnub','currentUser', function MessageServiceFactory($rootScope,Pubnub, currentUser) {
+.factory('MessageService', ['$rootScope', '$q', 'Pubnub','currentUser', function MessageServiceFactory($rootScope, $q, Pubnub, currentUser) {
   
   var self = this;
   this.messages = []
@@ -48,6 +48,8 @@ angular.module('app')
 
   var fetchPreviousMessages = function(){
 
+    deferred = $q.defer()
+
     Pubnub.history({
      channel: self.channel,
      callback: function(m){ 
@@ -55,11 +57,17 @@ angular.module('app')
         self.timeTokenFirstMessage = m[1]
         Array.prototype.unshift.apply(self.messages,m[0])
         $rootScope.$digest()
+        deferred.resolve(m)
+     },
+     error: function(m){
+        deferred.reject(m)
      },
      count: 10,
      start: self.timeTokenFirstMessage,
      reverse: false
     });
+
+    return deferred.promise
   };
 
   init();
