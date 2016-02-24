@@ -9,7 +9,7 @@
  * Main module of the application.
  */
 angular
-  .module('app', [ 'ngRoute', 'pubnub.angular.service'])
+  .module('app', [ 'ngRoute', 'pubnub.angular.service', 'ngNotify'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
@@ -21,7 +21,7 @@ angular
         redirectTo: '/'
       });
   })
-  
+
   .run(['Pubnub','currentUser', function(Pubnub, currentUser) {
 
     Pubnub.init({
@@ -30,4 +30,19 @@ angular
           uuid: currentUser
       });
 
+  }])
+  .run(['ngNotify', function(ngNotify) {
+
+      ngNotify.config({
+          theme: 'paster',
+          position: 'top',
+          duration: 200,
+          type: 'success',
+          sticky: false,
+          button: false,
+          html: false
+      });
+
   }]);
+
+

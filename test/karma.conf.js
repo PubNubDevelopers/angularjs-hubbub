@@ -29,6 +29,7 @@ module.exports = function(config) {
       'bower_components/pubnub/web/pubnub.min.js',
       'bower_components/pubnub-angular/dist/pubnub-angular-3.1.1.min.js',
       'bower_components/lodash/lodash.js',
+      'bower_components/ng-notify/src/scripts/ng-notify.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",
