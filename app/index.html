@@ -38,14 +38,18 @@
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
-        <script src="scripts/app.js"></script>
-        <script src="scripts/controllers/chat_controller.js"></script>
-        <script src="scripts/services/current_user.js"></script>
-        <script src="scripts/services/message.js"></script>
-        <script src="scripts/directives/message-list.js"></script>
-        <script src="scripts/directives/message-item.js"></script>
-        <script src="scripts/directives/message-form.js"></script>
-        <script src="scripts/directives/user-avatar.js"></script>
+        <script src="app.js"></script>
+        <script src="app.routes.js"></script>
+        <script src="app.config.js"></script>
+        
+        <script src="services/current_user.service.js"></script>
+        <script src="services/message.service.js"></script>
+        
+        <script src="shared/user-avatar.directive.js"></script>
+        <script src="components/message-form/message-form.directive.js"></script>
+        <script src="components/message-list/message-list.directive.js"></script>
+        <script src="components/message-item/message-item.directive.js"></script>
+
         <!-- endbuild -->
 </body>
 </html>
