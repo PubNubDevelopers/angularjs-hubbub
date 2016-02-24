@@ -8,68 +8,74 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
     },
     link: function(scope, element, attrs, ctrl) {
 
+      var element = angular.element(element)
+
       var scrollToBottom = function() {
-          var list = angular.element(element)[0]
-          list.scrollTop = list.scrollHeight;
-        };
+          element.scrollTop(element.prop('scrollHeight'));
+      };
 
       var hasScrollReachedBottom = function(){
-        element = angular.element(element)
-        return $(element).scrollTop() + $(element).innerHeight() >= $(element)[0].scrollHeight
-      }
+        return element.scrollTop() + element.innerHeight() >= element.prop('scrollHeight')
+      };
 
       var hasScrollReachedTop = function(){
-        element = angular.element(element)
-        return $(element).scrollTop() === 0 ;
-      }
+        return element.scrollTop() === 0 ;
+      };
 
-      var updateScrollStatus = function() {
+      var fetchPreviousMessages = function(){
 
-        var previousValue = scope.autoScrollDown;
-        var newValue = hasScrollReachedBottom();
+        ngNotify.set('Loading previous messages...','success');
+
+        var currentMessage = MessageService.getMessages()[0].uuid
+
+        MessageService.fetchPreviousMessages().then(function(m){
+
+          if(m[0].length <= 0){
+            scope.messagesAllFetched = true
+          }
+
+        }).then(function(m){
+
+          // Scroll to the previous message 
+          $anchorScroll(currentMessage);
+
+        });
+
+      };
+
+      var watchScroll = function() {
 
         if(hasScrollReachedTop()){
-          
-          var currentMessageId = MessageService.getMessages()[0].uuid
 
           if(scope.messagesAllFetched){
             ngNotify.set('All the messages have been loaded', 'grimace');
           }
           else {
-
-            ngNotify.set('Loading previous messages...','success');
-
-            MessageService.fetchPreviousMessages().then(function(m){
-
-              if(m[0].length <= 0){
-                scope.messagesAllFetched = true
-              }
-              
-              $anchorScroll(currentMessageId);
-            });
-
+            fetchPreviousMessages();
           }
         }
 
-        // Update the autoScrollDown value if it has changed
-        if (newValue != previousValue){
-          scope.autoScrollDown = newValue ;
-          scope.$digest();
-        }
+        // Update the autoScrollDown value 
+        scope.autoScrollDown = hasScrollReachedBottom()
+
       };
 
-      // Scroll down when the list is rendered
-      $timeout(scrollToBottom, 400);
+      var init = function(){
+          // Scroll down when the list is rendered
+          $timeout(scrollToBottom, 400);
 
-      // Check where the scroll is on the list
-       angular.element(element).bind("scroll", updateScrollStatus);
+          // Scroll down when new message
+          MessageService.subscribeNewMessage(function(){
+            if(scope.autoScrollDown){
+              scrollToBottom()
+            }
+          });
 
-      // Scroll down when new message
-      MessageService.subscribeNewMessage(function(){
-        if(scope.autoScrollDown){
-          scrollToBottom()
-        }
-      });
+          // Watch the scroll and trigger actions
+          element.bind("scroll", watchScroll);
+      };
+
+      init();
 
     },
     controller: function($scope){
