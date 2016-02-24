@@ -1,5 +1,6 @@
 angular.module('app')
-.factory('MessageService', ['$rootScope', '$q', 'Pubnub','currentUser', function MessageServiceFactory($rootScope, $q, Pubnub, currentUser) {
+.factory('MessageService', ['$rootScope', '$q', 'Pubnub','currentUser', 'ngNotify',
+ function MessageServiceFactory($rootScope, $q, Pubnub, currentUser, ngNotify) {
   
   var self = this;
   this.messages = []
@@ -14,9 +15,26 @@ angular.module('app')
     $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel), callback);
   };
 
+  var whenDisconnected = function(){
+      ngNotify.set('Connection lost. Trying to reconnect...', {
+        type: 'warn',
+        sticky: true,
+        button: false,
+      });
+  };
+
+  var whenReconnected = function(){
+      ngNotify.set('Connection re-established.', {
+          type: 'info',
+          duration: 1500
+      });
+  };
+
   var init = function() {
       Pubnub.subscribe({
           channel: self.channel,
+          disconnect : whenDisconnected, 
+          reconnect : whenReconnected,
           triggerEvents: ['callback']
       });
       Pubnub.time(function(time){
