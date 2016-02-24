@@ -31,12 +31,24 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
         if(hasScrollReachedTop()){
           
           var currentMessageId = MessageService.getMessages()[0].uuid
-          ngNotify.set('Loading previous messages...');
 
-          MessageService.fetchPreviousMessages().then(function(messages){
+          if(scope.messagesAllFetched){
+            ngNotify.set('All the messages have been loaded', 'grimace');
+          }
+          else {
+
+            ngNotify.set('Loading previous messages...','success');
+
+            MessageService.fetchPreviousMessages().then(function(m){
+
+              if(m[0].length <= 0){
+                scope.messagesAllFetched = true
+              }
+              
               $anchorScroll(currentMessageId);
-          });
+            });
 
+          }
         }
 
         // Update the autoScrollDown value if it has changed
@@ -63,6 +75,8 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
     controller: function($scope){
       // Auto scroll down is acticated when first loaded
       $scope.autoScrollDown = true;
+      // Indicates wether all the messages have been fetched or not.
+      $scope.messagesAllFetched = false;
     }
   };
 });
