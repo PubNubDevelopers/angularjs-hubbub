@@ -1,4 +1,11 @@
-# Demos using Angular and PubNub Angular SDK
+# Angular JS HubBub chat application
+
+### An AngularJS chat app powered by PubNub
+
+---
+
+![Screencast AngularJS Hubbub](http://g.recordit.co/srG2pmKwkr.gif)
+
 
 ## Build & development
 
