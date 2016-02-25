@@ -6,8 +6,8 @@ angular.module('app')
   this.messages = []
   this.channel = 'messages-channel4';
 
-  // Represent the timetoken of the first message for knowing 
-  // which data has already been saved
+  // We keep track of the timetoken of the first message of the array
+  // so it will be easier to fetch the previous messages later
   this.firstMessageTimeToken = null;
 
   ////// NOTIFICATION FUNCTIONS
@@ -41,46 +41,45 @@ angular.module('app')
         this.firstMessageTimeToken = time;
       })
 
-  }
+  };
 
   subcribeNewMessage(function(ngEvent,m){
     self.messages.push(m)
     $rootScope.$digest()
   });
 
-  var fetchMessages = function() {
-    // Fetching the messages history
-    // Don't forget to activate the history in your PubNub app in the developer portal.
-    Pubnub.history({
-     channel: self.channel,
-     callback: function(m){ 
-        // Update timetoken of the first message
-        self.timeTokenFirstMessage = m[1]
-        angular.extend(self.messages, m[0]);
-        $rootScope.$digest()
-     },
-     count: 20,
-     reverse: false
-    });
-  }
 
   var fetchPreviousMessages = function(){
 
     deferred = $q.defer()
 
-    Pubnub.history({
-     channel: self.channel,
-     callback: function(m){ 
+    // We load more messages the first time we load the app
+    // And less when we fetch the messages the next times
+    var default_messages_number = _.isEmpty(self.messages) ? 20 : 10 ;
+
+    var whenFetchingHistory = function(m){ 
         // Update timetoken of the first message
         self.timeTokenFirstMessage = m[1]
-        Array.prototype.unshift.apply(self.messages,m[0])
+
+        // We are updating the array in different way depending on if it's empty or not.
+        if(_.isEmpty(self.messages)){
+          angular.extend(self.messages, m[0]);  
+        }
+        else{
+          Array.prototype.unshift.apply(self.messages,m[0])
+        }
+
         $rootScope.$digest()
         deferred.resolve(m)
-     },
+    };
+
+    Pubnub.history({
+     channel: self.channel,
+     callback: whenFetchingHistory,
      error: function(m){
         deferred.reject(m)
      },
-     count: 10,
+     count: default_messages_number, 
      start: self.timeTokenFirstMessage,
      reverse: false
     });
@@ -93,11 +92,13 @@ angular.module('app')
   ////////////////// PUBLIC API ////////////////////////
 
   var getMessages = function() {
-    if (self.messages === undefined || self.messages.length == 0) {
-      fetchMessages();
+
+    if (_.isEmpty(self.messages)){
+      fetchPreviousMessages();
     }
     return self.messages;
-  }
+
+  };
 
   var sendMessage = function(messageContent) {
 
@@ -118,7 +119,7 @@ angular.module('app')
                 console.log(m);
             }
         });
-  }
+  };
 
 
   // The public API interface
