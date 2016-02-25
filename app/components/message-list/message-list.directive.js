@@ -3,9 +3,7 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
     restrict: "E",
     replace: true,
     templateUrl: 'components/message-list/message-list.html',
-    scope: {
-      messages: "=",
-    },
+
     link: function(scope, element, attrs, ctrl) {
 
       var element = angular.element(element)
