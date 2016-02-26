@@ -70,7 +70,7 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
           });
 
           // Watch the scroll and trigger actions
-          element.bind("scroll", watchScroll);
+          element.bind("scroll", _.debounce(watchScroll,250));
       };
 
       init();
