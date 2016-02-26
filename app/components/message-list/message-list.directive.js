@@ -51,7 +51,7 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
       var init = function(){
           
           // Watch the scroll and trigger actions
-          element.bind("scroll", watchScroll);
+          element.bind("scroll", _.throttle(watchScroll,250));
       };
 
       init();
