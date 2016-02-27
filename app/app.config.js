@@ -5,7 +5,9 @@
     Pubnub.init({
           publish_key: 'pub-c-a1cd7ac1-585e-478e-925b-65d17ce62f7d',
           subscribe_key: 'sub-c-204f063e-c559-11e5-b764-02ee2ddab7fe',
-          uuid: currentUser
+          uuid: currentUser,
+          origin: 'pubsub.pubnub.com',
+          ssl: true
       });
 
   }])
