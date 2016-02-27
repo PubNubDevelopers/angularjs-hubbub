@@ -15,5 +15,5 @@
     "angular-mocks": "^1.4.0"
   },
   "appPath": "app",
-  "moduleName": "appApp"
+  "moduleName": "app"
 }
