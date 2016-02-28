@@ -10,6 +10,9 @@ angular.module('app')
   // so it will be easier to fetch the previous messages later
   this.firstMessageTimeToken = null;
 
+  // Indicates wheither the messages service has been populated or not
+  this.isPopulated = false;
+
   ////// NOTIFICATION FUNCTIONS
   var subcribeNewMessage = function(callback){
     $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel), callback);
@@ -55,15 +58,17 @@ angular.module('app')
 
     // We load more messages the first time we load the app
     // And less when we fetch the messages the next times
-    var default_messages_number = _.isEmpty(self.messages) ? 20 : 10 ;
+    var default_messages_number = self.isPopulated ? 10 : 20 ;
 
     var whenFetchingHistory = function(m){ 
         // Update timetoken of the first message
         self.timeTokenFirstMessage = m[1]
 
-        // We are updating the array in different way depending on if it's empty or not.
-        if(_.isEmpty(self.messages)){
+        // We are updating the array in different way depending on if the message service has been populated or not
+        if(!self.isPopulated){
+          // We merge the 
           angular.extend(self.messages, m[0]);  
+          self.isPopulated = true;
         }
         else{
           Array.prototype.unshift.apply(self.messages,m[0])
@@ -93,11 +98,15 @@ angular.module('app')
 
   var getMessages = function() {
 
-    if (_.isEmpty(self.messages)){
+    if (!self.isPopulated){
       fetchPreviousMessages();
     }
     return self.messages;
 
+  };
+
+  var isPopulated = function(){
+    return self.isPopulated
   };
 
   var sendMessage = function(messageContent) {
@@ -124,6 +133,7 @@ angular.module('app')
 
   // The public API interface
   return {
+    isPopulated: isPopulated,
     getMessages: getMessages, 
     sendMessage: sendMessage,
     subscribeNewMessage: subcribeNewMessage,
