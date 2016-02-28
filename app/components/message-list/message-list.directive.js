@@ -1,4 +1,4 @@
-angular.module('app').directive('messageList', function($anchorScroll, MessageService, ngNotify) {
+angular.module('app').directive('messageList', function($rootScope, $anchorScroll, MessageService, ngNotify) {
   return {
     restrict: "E",
     replace: true,
@@ -61,9 +61,11 @@ angular.module('app').directive('messageList', function($anchorScroll, MessageSe
       var init = function(){
           
           // Scroll down when the list is populated
-          scope.$watch(function(){ return MessageService.isPopulated()}, function(){
-              // Defer the call of scrollToBottom is useful to ensure the DOM elements have been loaded
-              _.defer(scrollToBottom);
+          var unregister = $rootScope.$on('factory:message:populated', function(){ 
+            // Defer the call of scrollToBottom is useful to ensure the DOM elements have been loaded
+            _.defer(scrollToBottom);
+            unregister();
+
           });
 
           // Scroll down when new message
