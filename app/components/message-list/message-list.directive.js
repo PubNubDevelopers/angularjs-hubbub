@@ -1,4 +1,4 @@
-angular.module('app').directive('messageList', function($timeout, $anchorScroll, MessageService, ngNotify) {
+angular.module('app').directive('messageList', function($anchorScroll, MessageService, ngNotify) {
   return {
     restrict: "E",
     replace: true,
@@ -59,8 +59,12 @@ angular.module('app').directive('messageList', function($timeout, $anchorScroll,
       };
 
       var init = function(){
-          // Scroll down when the list is rendered
-          $timeout(scrollToBottom, 400);
+          
+          // Scroll down when the list is populated
+          scope.$watch(function(){ return MessageService.isPopulated()}, function(){
+              // Defer the call of scrollToBottom is useful to ensure the DOM elements have been loaded
+              _.defer(scrollToBottom);
+          });
 
           // Scroll down when new message
           MessageService.subscribeNewMessage(function(){
