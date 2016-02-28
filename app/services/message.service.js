@@ -2,6 +2,7 @@ angular.module('app')
 .factory('MessageService', ['$rootScope', '$q', 'Pubnub','currentUser', 'ngNotify',
  function MessageServiceFactory($rootScope, $q, Pubnub, currentUser, ngNotify) {
   
+  // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
   this.messages = []
   this.channel = 'messages-channel4';
@@ -9,9 +10,6 @@ angular.module('app')
   // We keep track of the timetoken of the first message of the array
   // so it will be easier to fetch the previous messages later
   this.firstMessageTimeToken = null;
-
-  // Indicates wheither the messages service has been populated or not
-  this.isPopulated = false;
 
   ////// NOTIFICATION FUNCTIONS
   var subcribeNewMessage = function(callback){
@@ -41,7 +39,7 @@ angular.module('app')
           triggerEvents: ['callback']
       });
       Pubnub.time(function(time){
-        this.firstMessageTimeToken = time;
+        self.firstMessageTimeToken = time;
       })
 
   };
@@ -54,21 +52,20 @@ angular.module('app')
 
   var fetchPreviousMessages = function(){
 
-    deferred = $q.defer()
+    var deferred = $q.defer()
 
     // We load more messages the first time we load the app
     // And less when we fetch the messages the next times
-    var default_messages_number = self.isPopulated ? 10 : 20 ;
+    var default_messages_number = _.isEmpty(self.messages) ? 20 : 10 ;
 
     var whenFetchingHistory = function(m){ 
         // Update timetoken of the first message
         self.timeTokenFirstMessage = m[1]
 
         // We are updating the array in different way depending on if the message service has been populated or not
-        if(!self.isPopulated){
-          // We merge the 
+        if(_.isEmpty(self.messages)){
           angular.extend(self.messages, m[0]);  
-          self.isPopulated = true;
+          $rootScope.$emit('factory:message:populated')
         }
         else{
           Array.prototype.unshift.apply(self.messages,m[0])
@@ -98,15 +95,11 @@ angular.module('app')
 
   var getMessages = function() {
 
-    if (!self.isPopulated){
+    if (_.isEmpty(self.messages)){
       fetchPreviousMessages();
     }
     return self.messages;
 
-  };
-
-  var isPopulated = function(){
-    return self.isPopulated
   };
 
   var sendMessage = function(messageContent) {
@@ -133,7 +126,6 @@ angular.module('app')
 
   // The public API interface
   return {
-    isPopulated: isPopulated,
     getMessages: getMessages, 
     sendMessage: sendMessage,
     subscribeNewMessage: subcribeNewMessage,
