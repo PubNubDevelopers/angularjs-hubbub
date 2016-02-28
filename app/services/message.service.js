@@ -49,39 +49,41 @@ angular.module('app')
     $rootScope.$digest()
   });
 
+  var populate = function(){
+
+    Pubnub.history({
+     channel: self.channel,
+     callback: function(m){
+        // Update the timetoken of the first message
+        angular.extend(self.messages, m[0]);  
+        self.timeTokenFirstMessage = m[1]
+        $rootScope.$digest()
+        $rootScope.$emit('factory:message:populated')
+     },
+     count: 20, 
+     reverse: false
+    });
+
+  };
 
   var fetchPreviousMessages = function(){
 
     var deferred = $q.defer()
 
-    // We load more messages the first time we load the app
-    // And less when we fetch the messages the next times
-    var default_messages_number = _.isEmpty(self.messages) ? 20 : 10 ;
-
-    var whenFetchingHistory = function(m){ 
-        // Update timetoken of the first message
-        self.timeTokenFirstMessage = m[1]
-
-        // We are updating the array in different way depending on if the message service has been populated or not
-        if(_.isEmpty(self.messages)){
-          angular.extend(self.messages, m[0]);  
-          $rootScope.$emit('factory:message:populated')
-        }
-        else{
-          Array.prototype.unshift.apply(self.messages,m[0])
-        }
-
-        $rootScope.$digest()
-        deferred.resolve(m)
-    };
-
     Pubnub.history({
      channel: self.channel,
-     callback: whenFetchingHistory,
+     callback: function(m){
+        // Update the timetoken of the first message
+        self.timeTokenFirstMessage = m[1]
+        Array.prototype.unshift.apply(self.messages,m[0])
+        $rootScope.$digest()
+        deferred.resolve(m)
+
+     },
      error: function(m){
         deferred.reject(m)
      },
-     count: default_messages_number, 
+     count: 10, 
      start: self.timeTokenFirstMessage,
      reverse: false
     });
@@ -96,7 +98,7 @@ angular.module('app')
   var getMessages = function() {
 
     if (_.isEmpty(self.messages)){
-      fetchPreviousMessages();
+      populate();
     }
     return self.messages;
 
