@@ -10,6 +10,7 @@ angular.module('app')
   // We keep track of the timetoken of the first message of the array
   // so it will be easier to fetch the previous messages later
   this.firstMessageTimeToken = null;
+  this.messagesAllFetched = false;
 
   var whenDisconnected = function(){
       ngNotify.set('Connection lost. Trying to reconnect...', {
@@ -48,16 +49,24 @@ angular.module('app')
 
   var populate = function(){
 
+    var defaultMessagesNumber = 20;
+
     Pubnub.history({
      channel: self.channel,
      callback: function(m){
         // Update the timetoken of the first message
         self.timeTokenFirstMessage = m[1]
         angular.extend(self.messages, m[0]);  
+        
+        if(m[0].length < defaultMessagesNumber){
+          self.messagesAllFetched = true;
+        }
+
         $rootScope.$digest()
         $rootScope.$emit('factory:message:populated')
+        
      },
-     count: 20, 
+     count: defaultMessagesNumber, 
      reverse: false
     });
 
@@ -72,6 +81,8 @@ angular.module('app')
 
   var fetchPreviousMessages = function(){
 
+    var defaultMessagesNumber = 10;
+
     var deferred = $q.defer()
 
     Pubnub.history({
@@ -80,6 +91,11 @@ angular.module('app')
         // Update the timetoken of the first message
         self.timeTokenFirstMessage = m[1]
         Array.prototype.unshift.apply(self.messages,m[0])
+        
+        if(m[0].length < defaultMessagesNumber){
+          self.messagesAllFetched = true;
+        }
+
         $rootScope.$digest()
         deferred.resolve(m)
 
@@ -87,7 +103,7 @@ angular.module('app')
      error: function(m){
         deferred.reject(m)
      },
-     count: 10, 
+     count: defaultMessagesNumber, 
      start: self.timeTokenFirstMessage,
      reverse: false
     });
@@ -105,8 +121,14 @@ angular.module('app')
 
   };
 
+  var messagesAllFetched = function() {
+
+    return self.messagesAllFetched;
+
+  };
+
   var sendMessage = function(messageContent) {
-    
+
       // Don't send an empty message 
       if (_.isEmpty(messageContent))
           return;
@@ -130,7 +152,8 @@ angular.module('app')
     getMessages: getMessages, 
     sendMessage: sendMessage,
     subscribeNewMessage: subcribeNewMessage,
-    fetchPreviousMessages: fetchPreviousMessages
+    fetchPreviousMessages: fetchPreviousMessages,
+    messagesAllFetched : messagesAllFetched
   } 
 
 }]);

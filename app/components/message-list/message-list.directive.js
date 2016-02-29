@@ -28,12 +28,6 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
         MessageService.fetchPreviousMessages().then(function(m){
 
-          if(m[0].length <= 0){
-            scope.messagesAllFetched = true
-          }
-
-        }).then(function(m){
-
           // Scroll to the previous message 
           $anchorScroll(currentMessage);
 
@@ -45,7 +39,7 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
         if(hasScrollReachedTop()){
 
-          if(scope.messagesAllFetched){
+          if(MessageService.messagesAllFetched()){
             ngNotify.set('All the messages have been loaded', 'grimace');
           }
           else {
@@ -85,8 +79,6 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
     controller: function($scope){
       // Auto scroll down is acticated when first loaded
       $scope.autoScrollDown = true;
-      // Indicates wether all the messages have been fetched or not.
-      $scope.messagesAllFetched = false;
       
       $scope.messages = MessageService.getMessages();
     }
