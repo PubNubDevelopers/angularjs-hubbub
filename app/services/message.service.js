@@ -11,11 +11,6 @@ angular.module('app')
   // so it will be easier to fetch the previous messages later
   this.firstMessageTimeToken = null;
 
-  ////// NOTIFICATION FUNCTIONS
-  var subcribeNewMessage = function(callback){
-    $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel), callback);
-  };
-
   var whenDisconnected = function(){
       ngNotify.set('Connection lost. Trying to reconnect...', {
         type: 'warn',
@@ -32,22 +27,24 @@ angular.module('app')
   };
 
   var init = function() {
+      
       Pubnub.subscribe({
           channel: self.channel,
           disconnect : whenDisconnected, 
           reconnect : whenReconnected,
           triggerEvents: ['callback']
       });
+
       Pubnub.time(function(time){
         self.firstMessageTimeToken = time;
       })
 
-  };
-
-  subcribeNewMessage(function(ngEvent,m){
-    self.messages.push(m)
-    $rootScope.$digest()
+      subcribeNewMessage(function(ngEvent,m){
+        self.messages.push(m)
+        $rootScope.$digest()
   });
+
+  };
 
   var populate = function(){
 
@@ -55,8 +52,8 @@ angular.module('app')
      channel: self.channel,
      callback: function(m){
         // Update the timetoken of the first message
-        angular.extend(self.messages, m[0]);  
         self.timeTokenFirstMessage = m[1]
+        angular.extend(self.messages, m[0]);  
         $rootScope.$digest()
         $rootScope.$emit('factory:message:populated')
      },
@@ -65,6 +62,13 @@ angular.module('app')
     });
 
   };
+
+  ////////////////// PUBLIC API ////////////////////////
+
+  var subcribeNewMessage = function(callback){
+    $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel), callback);
+  };
+
 
   var fetchPreviousMessages = function(){
 
@@ -91,40 +95,35 @@ angular.module('app')
     return deferred.promise
   };
 
-  init();
-
-  ////////////////// PUBLIC API ////////////////////////
 
   var getMessages = function() {
 
-    if (_.isEmpty(self.messages)){
+    if (_.isEmpty(self.messages))
       populate();
-    }
+
     return self.messages;
 
   };
 
   var sendMessage = function(messageContent) {
+    
+      // Don't send an empty message 
+      if (_.isEmpty(messageContent))
+          return;
 
-        // Don't send an empty message 
-        if (!messageContent || messageContent === '') {
-            return;
-        }
-
-        Pubnub.publish({
-            channel: self.channel,
-            message: {
-                uuid: (Date.now() + currentUser),
-                content: messageContent,
-                sender_uuid: currentUser,
-                date: Date.now()
-            },
-            callback: function(m) {
-                console.log(m);
-            }
-        });
+      Pubnub.publish({
+          channel: self.channel,
+          message: {
+              uuid: (Date.now() + currentUser),
+              content: messageContent,
+              sender_uuid: currentUser,
+              date: Date.now()
+          },
+      });
   };
 
+
+  init();
 
   // The public API interface
   return {
