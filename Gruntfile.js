@@ -1,7 +1,7 @@
 // Generated on 2016-01-28 using generator-angular 0.15.1
 'use strict';
 
-// # Globbing
+ //# Globbing
 // for performance reasons we're only matching one level down:
 // 'test/spec/{,*/}*.js'
 // use this if you want to recursively match all subfolders:
@@ -38,14 +38,14 @@ module.exports = function (grunt) {
         tasks: ['wiredep']
       },
       js: {
-        files: ['<%= yeoman.app %>/scripts/{,*/}*.js'],
+        files: ['<%= yeoman.app %>/scripts/**/*.js'],
         tasks: ['newer:jshint:all', 'newer:jscs:all'],
         options: {
           livereload: '<%= connect.options.livereload %>'
         }
       },
       jsTest: {
-        files: ['test/spec/{,*/}*.js'],
+        files: ['test/spec/**/*.js'],
         tasks: ['newer:jshint:test', 'newer:jscs:test', 'karma']
       },
       styles: {
@@ -60,7 +60,7 @@ module.exports = function (grunt) {
           livereload: '<%= connect.options.livereload %>'
         },
         files: [
-          '<%= yeoman.app %>/{,*/}*.html',
+          '<%= yeoman.app %>/**/*.html',
           '.tmp/styles/{,*/}*.css',
           '<%= yeoman.app %>/images/{,*/}*.{png,jpg,jpeg,gif,webp,svg}'
         ]
@@ -255,12 +255,12 @@ module.exports = function (grunt) {
 
     // Performs rewrites based on filerev and the useminPrepare configuration
     usemin: {
-      html: ['<%= yeoman.dist %>/{,*/}*.html'],
-      css: ['<%= yeoman.dist %>/styles/{,*/}*.css'],
-      js: ['<%= yeoman.dist %>/scripts/{,*/}*.js'],
+      html: ['<%= yeoman.dist %>/**/*.html'],
+      css: ['<%= yeoman.dist %>/styles/**/*.css'],
+      js: ['<%= yeoman.dist %>/**/*.js'],
       options: {
         assetsDirs: [
-          '<%= yeoman.dist %>',
+          '<%= yeoman.dist %>', 
           '<%= yeoman.dist %>/images',
           '<%= yeoman.dist %>/styles'
         ],
@@ -329,7 +329,7 @@ module.exports = function (grunt) {
         files: [{
           expand: true,
           cwd: '<%= yeoman.dist %>',
-          src: ['*.html'],
+          src: ['**.html'],
           dest: '<%= yeoman.dist %>'
         }]
       }
@@ -343,7 +343,7 @@ module.exports = function (grunt) {
           usemin: 'scripts/scripts.js'
         },
         cwd: '<%= yeoman.app %>',
-        src: 'views/{,*/}*.html',
+        src: ['views/**/*.html','components/**/*.html'],
         dest: '.tmp/templateCache.js'
       }
     },
@@ -387,7 +387,15 @@ module.exports = function (grunt) {
           cwd: '.tmp/images',
           dest: '<%= yeoman.dist %>/images',
           src: ['generated/*']
-        }]
+        },
+        {
+            expand: true,
+            dot: true,
+            cwd: 'components/Materialize/dist', // change this for font-awesome
+            src: ['font/*.*'],
+            dest: '<%= yeoman.dist %>'
+        }
+        ]
       },
       styles: {
         expand: true,
@@ -396,6 +404,7 @@ module.exports = function (grunt) {
         src: '{,*/}*.css'
       }
     },
+
 
     // Run some tasks in parallel to speed up the build process
     concurrent: {
