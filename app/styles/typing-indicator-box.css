@@ -1,0 +1,25 @@
+/* -------- Typing indicator box ---------- */
+
+.typing-indicator-box {
+  flex: 1;
+  margin:0;
+  max-height:45px;
+  background-color: #A2C4C9;
+}
+
+.typing-indicator-box ul {
+  flex: 1;
+  flex-direction: row;
+  overflow-x:auto; 
+  flex-wrap: nowrap;
+  margin:0;
+}
+
+.typing-indicator-box img{
+  padding:4px;
+  width:45px;
+}
+
+.typing-indicator-box li{
+  display: inline-block;
+}
