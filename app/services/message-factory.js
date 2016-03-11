@@ -15,6 +15,6 @@ angular.module('app')
          }
     });
 
-   return Channel('messages-channel-blog3', {autoload: 20, presence: true});
+   return Channel('messages-channel-blog4', {autoload: 20, presence: true});
 
 }]);

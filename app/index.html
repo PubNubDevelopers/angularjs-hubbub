@@ -13,8 +13,11 @@
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/chat.css -->
+    <link rel="stylesheet" href="styles/typing-indicator.css">
     <link rel="stylesheet" href="styles/chat.css">
     <link rel="stylesheet" href="styles/online-user-list.css">
+    <link rel="stylesheet" href="styles/typing-indicator-box.css">
+    
 
     <link rel="stylesheet" href="styles/ng-notify.theme.css">
     <!-- endbuild -->
@@ -47,15 +50,18 @@
         <script src="services/current_user.service.js"></script>
         <script src="services/message-factory.js"></script>
         <script src="services/user.service.js"></script>
+        <script src="services/typing-indicator.service.js"></script>
         
         <script src="shared/user-avatar.directive.js"></script>
 
         <script src="shared/repeat-complete.directive.js"></script>
 
         <script src="components/message-form/message-form.directive.js"></script>
+        <script src="components/message-form/type-tracking.directive.js"></script>
         <script src="components/message-list/message-list.directive.js"></script>
         <script src="components/message-item/message-item.directive.js"></script>
         <script src="components/online-user-list/online-user-list.directive.js"></script>
+        <script src="components/typing-indicator-box/typing-indicator-box.directive.js"></script>
 
 
         
