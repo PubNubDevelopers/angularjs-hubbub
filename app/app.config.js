@@ -7,7 +7,9 @@
           subscribe_key: 'sub-c-204f063e-c559-11e5-b764-02ee2ddab7fe',
           uuid: currentUser,
           origin: 'pubsub.pubnub.com',
-          ssl: true
+          ssl: true,
+          heartbeat: 40,
+          heartbeat_interval: 60
       });
 
   }])

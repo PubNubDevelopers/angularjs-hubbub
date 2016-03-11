@@ -1,0 +1,40 @@
+/* -------- Online user list ---------- */
+
+.online-user-list, .online-user-list ul {
+  display: flex;
+}
+
+.online-user-list {
+  flex: 1;
+  margin:0;
+  max-height:65px;
+  background-color: #009688 !important;
+}
+
+.online-user-list ul {
+  flex: 1;
+  flex-direction: row;
+  overflow-x:auto; 
+  flex-wrap: nowrap;
+  margin:0;
+}
+
+.online-user-list li{
+  display: inline-block;
+}
+
+.online-user-list img{
+  margin:4px;
+  width:50px;
+}
+
+.online-users-number{
+  color:white;
+  margin-left:10px;
+  margin-right:10px;
+}
+
+.online-users-number i{
+  font-size:50px;
+
+}
