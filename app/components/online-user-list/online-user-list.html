@@ -1,0 +1,10 @@
+<div class="online-user-list">
+	<div class="online-users-number valign-wrapper">
+		<i class="material-icons">people</i><span class="valign">{{users.length}} online </span>		
+	</div>
+	<ul>
+	  <li ng-repeat="user in users track by user.uuid">
+	    <user-avatar uuid="{{user.uuid}}"></user-avatar>
+	  </li>
+	</ul> 
+</div>

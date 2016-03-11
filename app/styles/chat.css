@@ -4,20 +4,21 @@ html, body, .page, .message-container {
 }
 
 .message-container, .message-form {
-    display: flex;
+  display: flex;
 }
 
 .message-form {
   flex:1;
   max-height:136px;
-   background-color: #009688 !important;
+  background-color: #009688 !important;
   color: white;
-  margin-top:-15px;
 }
 
 .message-list {
-  flex: 1; overflow: auto;
-  margin-top:-1px;
+  flex: 1; 
+  overflow: auto;
+  margin-top:0;
+  margin-bottom:0;
 }
 
 .message-form .input-field input {
@@ -32,4 +33,7 @@ html, body, .page, .message-container {
   color:white;
 }
 
+.collection .collection-item:last-child {
+    border-bottom: 0.1em solid #DCDCDC;
+}
 

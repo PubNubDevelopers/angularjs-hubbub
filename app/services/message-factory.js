@@ -5,7 +5,7 @@ angular.module('app')
   // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
   this.messages = []
-  this.channel = 'messages-channel6';
+  this.channel = 'messages-channel-blog3';
 
   // We keep track of the timetoken of the first message of the array
   // so it will be easier to fetch the previous messages later
@@ -33,7 +33,8 @@ angular.module('app')
           channel: self.channel,
           disconnect : whenDisconnected, 
           reconnect : whenReconnected,
-          triggerEvents: ['callback']
+          noheresync: true, 
+          triggerEvents: true
       });
 
       Pubnub.time(function(time){
