@@ -1,0 +1,12 @@
+<div class="typing-indicator-box">
+	<ul>
+	  <li ng-repeat="userTyping in usersTyping track by userTyping.uuid">
+	    <user-avatar uuid="{{userTyping.uuid}}"></user-avatar>
+	    <div class="typing-indicator">
+		  <span></span>
+		  <span></span>
+		  <span></span>
+		</div>
+	  </li>
+	</ul> 
+</div>

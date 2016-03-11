@@ -5,7 +5,7 @@ angular.module('app')
   // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
   this.messages = []
-  this.channel = 'messages-channel-blog3';
+  this.channel = 'messages-channel-blog4';
 
   // We keep track of the timetoken of the first message of the array
   // so it will be easier to fetch the previous messages later
