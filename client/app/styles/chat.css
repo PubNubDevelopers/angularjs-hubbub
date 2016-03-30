@@ -1,4 +1,4 @@
-html, body, .page, .message-container {
+html, body, .message-container{
    height: 100%;
   flex-direction: column;
 }
