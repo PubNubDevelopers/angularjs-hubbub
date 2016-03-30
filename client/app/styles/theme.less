@@ -1,0 +1,21 @@
+// Main color
+
+@base-color: #0277bd;
+
+// Derivated colors
+
+@base-color-fade: fadeout(@base-color, 60%);
+@base-color-light: lighten(@base-color, 4%);
+@base-color-light2: fadeout(lighten(@base-color, 6%), 30%);
+@base-color-dark: darken(@base-color, 3%);
+
+// Buttons
+
+@button-color: @base-color-light;
+@button-color-hover: @base-color-dark;
+
+// Ideas for other main color
+// Blue : #0277bd
+// Green : #009688
+// Purple : #673ab7 
+// Red: #d02129
