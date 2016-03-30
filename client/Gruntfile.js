@@ -25,8 +25,23 @@ module.exports = function (grunt) {
     dist: 'dist'
   };
 
+  grunt.loadNpmTasks('grunt-contrib-less');
+
   // Define the configuration for all the tasks
   grunt.initConfig({
+
+
+     less: {
+        development: {
+          options: {
+            paths: ["styles/"],
+            yuicompress: true
+          },
+          files: {
+            "<%= yeoman.app %>/styles/style.css": "<%= yeoman.app %>/styles/*.less"
+          }
+        }
+      },
 
     // Project settings
     yeoman: appConfig,
@@ -44,6 +59,11 @@ module.exports = function (grunt) {
           livereload: '<%= connect.options.livereload %>'
         }
       },
+      less: {
+        files: "<%= yeoman.app %>/styles/*.less",
+        tasks: ["less"]
+      },
+
       jsTest: {
         files: ['test/spec/**/*.js'],
         tasks: ['newer:jshint:test', 'newer:jscs:test', 'karma']
@@ -440,6 +460,7 @@ module.exports = function (grunt) {
       'clean:server',
       'concurrent:server',
       'postcss:server',
+      'less',
       'connect:livereload',
       'watch'
     ]);
@@ -460,6 +481,7 @@ module.exports = function (grunt) {
   ]);
 
   grunt.registerTask('build', [
+    'less',
     'clean:dist',
     'wiredep',
     'useminPrepare',
