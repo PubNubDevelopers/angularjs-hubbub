@@ -1,4 +1,4 @@
 'use strict';
 
 angular
-  .module('app', [ 'ngRoute', 'pubnub.angular.service', 'ngNotify'])
+  .module('app', [ 'ngRoute', 'pubnub.angular.service', 'ngNotify', 'satellizer'])
