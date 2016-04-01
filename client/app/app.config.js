@@ -21,4 +21,14 @@
           duration: 250
       });
 
+  }])
+  .config(['$authProvider', function($authProvider) {
+
+
+    $authProvider.github({
+      clientId: '1e439e6a9047190ec980',
+      url: 'http://localhost:3000/auth/github',
+      authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+    });
+
   }]);
