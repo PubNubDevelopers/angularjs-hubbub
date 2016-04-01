@@ -1,7 +1,7 @@
 angular.module('app').directive('userAvatar', function() {
   return {
     restrict: "E",
-    template: '<img src="{{avatarUrl}}" alt="{{uuid}}" class="circle">',
+    template: '<img ng-src="{{avatarUrl}}" alt="{{uuid}}" class="circle">',
     scope: {
       uuid: "@",
     },
