@@ -21,6 +21,16 @@ angular
       .when('/login', {
         templateUrl: 'views/login.html'
       })
+      .when('/logout', { 
+        template: null,
+        controller: function($location, $auth){
+          if (!$auth.isAuthenticated()) { return; }
+          $auth.logout()
+          .then(function() {
+            $location.path('/login');
+          });
+        }
+      })
       .otherwise({
         redirectTo: '/'
       });
