@@ -4,6 +4,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var cors = require('cors');
+var Datastore = require('nedb')
 
 var github_oauth = require('./routes/github_oauth');
 
@@ -18,6 +19,17 @@ app.use(cookieParser());
 app.set('view engine', 'ejs');
 
 app.use(cors());
+
+
+/*
+ |--------------------------------------------------------------------------
+ | Setting up the DB
+ |--------------------------------------------------------------------------
+*/
+
+db = {};
+db.users = new Datastore({ filename: 'db/users.db', autoload: true });
+db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: true });
 
 /*
  |--------------------------------------------------------------------------
