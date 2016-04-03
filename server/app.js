@@ -19,6 +19,12 @@ app.set('view engine', 'ejs');
 
 app.use(cors());
 
+/*
+ |--------------------------------------------------------------------------
+ | Login with GitHub
+ |--------------------------------------------------------------------------
+*/
+
 app.use('/', github_oauth);
 
 // catch 404 and forward to error handler
