@@ -9,6 +9,8 @@ var parseUrlencoded = bodyParser.urlencoded({ extended: false });
 var request = require('request');
 var qs = require('querystring');
 var Datastore = require('nedb')
+var github = require('octonode');
+var _ = require('lodash');
 
 var app = express();
 
@@ -46,16 +48,40 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
       code: req.body.code,
       client_id: req.body.clientId,
       client_secret: '3c69fde2d90e34e6ccc7eafd5920bf51d0f540e0',
-      redirect_uri: req.body.redirectUri
+      redirect_uri: null
     };
 
     // Exchange authorization code for access token.
     request.post({ url: accessTokenUrl, qs: params }, function(err, response, token) {
 
-         token = qs.parse(token);
-         accessToken = token.accessToken;
+         var access_token = qs.parse(token).access_token;
+         var github_client = github.client(access_token);
 
-         res.send({token: token.access_token});
+         // Retrieve profile information about the current user.
+         github_client.me().info(function(err, profile){
+
+            var github_id = profile['id'];
+
+            db.users.find({ _id: github_id  }, function (err, docs) {
+
+              // The user doesn't have an account already
+              if(_.isEmpty(docs)){
+
+                // Create the user
+                var user = { _id: github_id }
+                db.users.insert(user);
+
+              }
+
+              // Store access tokens
+              var token = { value: access_token, user_id: github_id }
+              db.access_tokens.insert(token);
+
+            });
+         });
+
+         res.send({token: access_token});
+
     });
   });
 
