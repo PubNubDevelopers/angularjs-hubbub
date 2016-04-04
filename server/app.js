@@ -11,6 +11,8 @@ var qs = require('querystring');
 var Datastore = require('nedb')
 var github = require('octonode');
 var _ = require('lodash');
+var dotenv = require('dotenv')
+dotenv.config({path: '../.env'});
 
 var app = express();
 
@@ -22,7 +24,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(cors());
-
 
 /*
  |--------------------------------------------------------------------------
@@ -46,9 +47,9 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
 
     var params = {
       code: req.body.code,
-      client_id: req.body.clientId,
-      client_secret: '3c69fde2d90e34e6ccc7eafd5920bf51d0f540e0',
-      redirect_uri: null
+      client_id: process.env.GITHUB_CLIENT_ID,
+      client_secret: process.env.GITHUB_CLIENT_SECRET,
+      redirect_uri: process.env.GITHUB_REDIRECT_URI
     };
 
     // Exchange authorization code for access token.
