@@ -1,2 +1,25 @@
 angular.module('app')
-.value('currentUser', _.random(1000000).toString());
+.factory('currentUser', ['$http', '$auth', function currentUserFactory($http, $auth) {
+
+	var userApiUrl = 'https://api.github.com/user';
+	var token = $auth.getToken()
+	var authenticatedUser = null
+
+	var fetch = function(){
+		return $http({ cache: true, method: 'GET', url: userApiUrl, data: {token: token} })
+				 .then(function(user){
+				 	authenticatedUser = user.data; 
+				 	return user.data
+				 })
+	};
+
+	var get = function(){
+		return authenticatedUser;
+	};
+
+    return {
+    			fetch: fetch,
+    			get: get
+    	} 
+   
+}]);
