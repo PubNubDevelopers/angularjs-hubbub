@@ -1,11 +1,11 @@
 angular.module('app')
-.factory('UserService', ['$rootScope', 'Pubnub','currentUser',
- function UserServiceFactory($rootScope, Pubnub, currentUser) {
+.factory('OnlineUsersService', ['$rootScope', 'Pubnub','currentUser',
+ function OnlineUsersServiceFactory($rootScope, Pubnub, currentUser) {
   
   // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
   this.users = []
-  this.channel = 'messages-channel-blog4';
+  this.channel = 'messages-channel-blog5';
 
   var populate = function(){
     
