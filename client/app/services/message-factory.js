@@ -7,14 +7,17 @@ angular.module('app')
     var Channel = $pubnubChannel.$extend({
       sendMessage: function(messageContent) {
          return this.$publish({
-                                  uuid: (Date.now() + currentUser),
+                                  uuid: (Date.now() + currentUser.get().id),
                                   content: messageContent,
-                                  sender_uuid: currentUser.get().id,
+                                  sender: { 
+                                            uuid: currentUser.get().id,
+                                            login: currentUser.get().login
+                                          },
                                   date: Date.now()
                               })
          }
     });
 
-   return Channel('messages-channel-blog4', {autoload: 20, presence: true});
+   return Channel('messages-channel-blog5', {autoload: 20, presence: true});
 
 }]);
