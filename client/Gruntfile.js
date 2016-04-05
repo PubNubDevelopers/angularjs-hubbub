@@ -26,10 +26,22 @@ module.exports = function (grunt) {
   };
 
   grunt.loadNpmTasks('grunt-contrib-less');
+  grunt.loadNpmTasks('grunt-ng-constant');
 
   // Define the configuration for all the tasks
   grunt.initConfig({
 
+      ngconstant: {
+        options: {
+          dest: '<%= yeoman.app %>/constants.config.js',
+          name: 'app',
+          deps: false,
+          constants: {
+            config: grunt.file.readJSON('config.json')
+          }
+        },
+        build: {}
+      },
 
      less: {
         development: {
@@ -461,6 +473,7 @@ module.exports = function (grunt) {
       'concurrent:server',
       'postcss:server',
       'less',
+      'ngconstant:build',
       'connect:livereload',
       'watch'
     ]);
@@ -496,7 +509,8 @@ module.exports = function (grunt) {
     'uglify',
     'filerev',
     'usemin',
-    'htmlmin'
+    'htmlmin',
+    'ngconstant:build'
   ]);
 
   grunt.registerTask('default', [
