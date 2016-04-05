@@ -1,4 +1,4 @@
-angular.module('app').directive('onlineUserList', function($rootScope, UserService) {
+angular.module('app').directive('onlineUserList', function($rootScope, OnlineUsersService) {
   return {
     restrict: "E",
     replace: true,
@@ -6,7 +6,7 @@ angular.module('app').directive('onlineUserList', function($rootScope, UserServi
 
     controller: function($scope){
       
-      $scope.users = UserService.getOnlineUsers();
+      $scope.users = OnlineUsersService.getOnlineUsers();
 
     }
   };
