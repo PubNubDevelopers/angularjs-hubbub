@@ -24,11 +24,8 @@ angular
       .when('/logout', { 
         template: null,
         controller: function($location, $auth){
-          if (!$auth.isAuthenticated()) { return; }
-          $auth.logout()
-          .then(function() {
-            $location.path('/login');
-          });
+          if ($auth.isAuthenticated()) { $auth.logout() }
+          $location.path('/login');
         }
       })
       .otherwise({
