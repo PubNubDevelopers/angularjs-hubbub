@@ -37,10 +37,19 @@ body,
 }
 
 .login-container {
-  background: #0277bd;
   height: 100%;
   flex-direction: column;
   display: flex;
+  background: #0277bd;
+  /* Old browsers */
+  background: -moz-linear-gradient(top, #0277bd 0%, #014771 100%);
+  /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, #0277bd 0%, #014771 100%);
+  /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, #0277bd 0%, #014771 100%);
+  /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#0277bd, endColorstr=#014771, GradientType=0);
+  /* IE6-9 */
 }
 .btn-login-github {
   background-color: #0284d1;
@@ -50,36 +59,25 @@ body,
   background-color: #026dae;
   color: white;
 }
-/*-- signin-card animation ---------------------------------------- */
-.signin-card {
-  -webkit-animation: cardEnter 0.25s ease-in-out 0.5s;
-  animation: cardEnter 0.75s ease-in-out 0.5s;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
-  opacity: 0;
-}
-/* -- login paper styles ------------------------------ */
 .signin-card {
   max-width: 350px;
   border-radius: 2px;
-  margin: 50px auto;
-  padding: 20px;
   background-color: #eceff1;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.19), 0 6px 6px rgba(0, 0, 0, 0.23);
+  position: absolute;
+  top: 20%;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 18px;
+  border-radius: 4px;
+  z-index: 100;
 }
 .signin-card .logo-image,
 .signin-card h1,
 .signin-card p {
   text-align: center;
-}
-/* -- font styles ------------------------------------- */
-.display1 {
-  font-size: 28px;
-  font-weight: 100;
-  line-height: 1.2;
-  color: #757575;
-  text-transform: inherit;
-  letter-spacing: inherit;
 }
 .subhead {
   font-size: 16px;
@@ -89,7 +87,15 @@ body,
   text-transform: inherit;
   letter-spacing: inherit;
 }
-/* card animation from Animate.css -------------------- */
+/*----------------- Animation .signin-card ---------------------*/
+.signin-card {
+  -webkit-animation: cardEnter 0.25s ease-in-out 0.5s;
+  animation: cardEnter 0.75s ease-in-out 0.5s;
+  -webkit-animation-fill-mode: both;
+  animation-fill-mode: both;
+  opacity: 0;
+}
+/* ------------ card animation from Animate.css -------------- */
 @-webkit-keyframes cardEnter {
   0%,
   20%,
@@ -177,6 +183,13 @@ body,
     -ms-transform: scale3d(1, 1, 1);
     transform: scale3d(1, 1, 1);
   }
+}
+/* ------------ Particle.js -------------- */
+#particles-js {
+  flex-direction: column;
+  display: flex;
+  height: 100%;
+  width: 100%;
 }
 
 .input-field .prefix.active {
