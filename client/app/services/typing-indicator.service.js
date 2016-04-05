@@ -22,7 +22,7 @@ angular.module('app')
   var updateTypingUserList = function(event){
 
       // We don't want to receive our own presence events
-      if(event['uuid'] === currentUser) return;
+      if(event['uuid'].toString() === currentUser.get().id.toString()) return;
 
       // Add people typing
       if(event['action'] === 'state-change' && event['data']['isTyping']){
@@ -60,7 +60,7 @@ angular.module('app')
         self.isCurrentUserTyping = isTyping;
         Pubnub.state({
           channel: self.channel,
-          uuid: currentUser,
+          uuid: currentUser.get().id,
           state: { isTyping: self.isCurrentUserTyping }
         });
 

@@ -5,8 +5,8 @@
        <i class="prefix mdi-communication-chat"></i>
        <input ng-model="messageContent" type="text" placeholder="Type your message" type-tracking />
        <span class="chip left">
-          <user-avatar uuid="{{uuid}}"></user-avatar>
-          Anonymous robot #{{uuid}}
+          <user-avatar uuid="{{currentUser.id}}"></user-avatar>
+          {{currentUser.name}}
        </span>
      </div>
      <div class="input-field col s2">

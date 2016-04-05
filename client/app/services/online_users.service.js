@@ -23,7 +23,7 @@ angular.module('app')
   var updateOnlineUserList = function(event){
       
       // We don't want to receive our own presence events
-      if(event['uuid'] === currentUser) return;
+      if(event['uuid'].toString() === currentUser.get().id.toString()) return;
 
       if(event['action'] === 'join'){
 

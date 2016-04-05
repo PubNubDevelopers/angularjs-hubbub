@@ -9,7 +9,7 @@ angular.module('app')
          return this.$publish({
                                   uuid: (Date.now() + currentUser),
                                   content: messageContent,
-                                  sender_uuid: currentUser,
+                                  sender_uuid: currentUser.get().id,
                                   date: Date.now()
                               })
          }
