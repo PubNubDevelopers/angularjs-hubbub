@@ -1,10 +1,9 @@
-  angular
-  .module('app')
-  .run(['Pubnub','currentUser', function(Pubnub, currentUser) {
+  var app = angular.module('app')
+  app.run(['Pubnub','currentUser','config', function(Pubnub, currentUser, config) {
 
     Pubnub.init({
-          publish_key: 'pub-c-a1cd7ac1-585e-478e-925b-65d17ce62f7d',
-          subscribe_key: 'sub-c-204f063e-c559-11e5-b764-02ee2ddab7fe',
+          publish_key: config.PUBNUB_SUBSCRIBE_KEY,
+          subscribe_key: config.PUBNUB_SUBSCRIBE_KEY,
           uuid: currentUser,
           origin: 'pubsub.pubnub.com',
           ssl: true,
@@ -22,13 +21,13 @@
       });
 
   }])
-  .config(['$authProvider', function($authProvider) {
+  .config(['$authProvider','config', function($authProvider, config) {
 
 
     $authProvider.github({
-      clientId: '1e439e6a9047190ec980',
-      url: 'http://localhost:3000/auth/github',
-      authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+      clientId: config.GITHUB_CLIENT_ID,
+      redirectUri: config.GITHUB_REDIRECT_URI,
+      url: config.GITHUB_ACCESS_TOKEN_REQUEST_URL,
     });
 
   }]);
