@@ -13,10 +13,32 @@ angular
       return deferred.promise;
     };
 
+    // Init the chat
+    var initChat = function(currentUser, config, Pubnub){
+
+      return currentUser.fetch().then(function(user){
+        Pubnub.init({
+                      publish_key: config.PUBNUB_PUBLISH_KEY,
+                      subscribe_key: config.PUBNUB_SUBSCRIBE_KEY,
+                      uuid: user.id,
+                      origin: 'pubsub.pubnub.com',
+                      ssl: true,
+                      heartbeat: 40,
+                      heartbeat_interval: 60
+                  });
+
+      });
+
+    };
+
     $routeProvider
       .when('/', {
         templateUrl: 'views/chat.html',
-        resolve: { requireAuthentication: requireAuthentication }
+        resolve: { 
+                    requireAuthentication: requireAuthentication,
+                    initChat: initChat
+                  }
+
       })
       .when('/login', {
         templateUrl: 'views/login.html'
