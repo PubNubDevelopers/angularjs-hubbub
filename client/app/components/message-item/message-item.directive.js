@@ -4,6 +4,7 @@ angular.module('app').directive('messageItem', function(MessageService) {
     templateUrl: 'components/message-item/message-item.html',
     scope: {
       senderUuid: "@",
+      senderLogin: "@",
       content: "@",
       date: "@"
     }

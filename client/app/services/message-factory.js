@@ -139,7 +139,10 @@ angular.module('app')
           message: {
               uuid: (Date.now() + currentUser.get().id),
               content: messageContent,
-              sender_uuid: currentUser.get().id,
+              sender: { 
+                        uuid: currentUser.get().id,
+                        login: currentUser.get().login
+                      },
               date: Date.now()
           },
       });
