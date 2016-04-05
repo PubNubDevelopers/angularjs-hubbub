@@ -137,9 +137,9 @@ angular.module('app')
       Pubnub.publish({
           channel: self.channel,
           message: {
-              uuid: (Date.now() + currentUser),
+              uuid: (Date.now() + currentUser.get().id),
               content: messageContent,
-              sender_uuid: currentUser,
+              sender_uuid: currentUser.get().id,
               date: Date.now()
           },
       });
