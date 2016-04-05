@@ -11,8 +11,7 @@ var qs = require('querystring');
 var Datastore = require('nedb')
 var github = require('octonode');
 var _ = require('lodash');
-var dotenv = require('dotenv')
-dotenv.config({path: '../.env'});
+var dotenv = require('dotenv').config()
 
 var app = express();
 
