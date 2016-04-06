@@ -13,10 +13,11 @@
     "dotenv": "^2.0.0",
     "ejs": "~2.3.3",
     "express": "~4.13.1",
-    "lodash": "^4.8.1",
+    "lodash": "^4.8.2",
     "morgan": "~1.6.1",
     "nedb": "^1.8.0",
     "octonode": "^0.7.5",
+    "pubnub": "^3.14.5",
     "querystring": "^0.2.0",
     "request": "^2.69.0",
     "serve-favicon": "~2.3.0"
