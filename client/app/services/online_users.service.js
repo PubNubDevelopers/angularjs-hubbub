@@ -13,6 +13,14 @@ angular.module('app')
       channel : self.channel,
       state: true,
       callback : function(m){
+
+        var online_users = m['uuids']
+
+        // Remove the current user fron the list of online users
+        _.remove(online_users, function(user) {
+          return user['uuid'] == currentUser.get().id;
+        });
+
         angular.extend(self.users, m['uuids']); 
         $rootScope.$digest()
       }
