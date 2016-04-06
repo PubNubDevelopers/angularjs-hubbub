@@ -4,3 +4,4 @@
 /.sass-cache
 /bower_components
 /app/constants.config.js
+/config.json
