@@ -12,6 +12,7 @@ var Datastore = require('nedb')
 var github = require('octonode');
 var _ = require('lodash');
 var dotenv = require('dotenv').config()
+var pubnub = require('pubnub');
 
 var app = express();
 
@@ -33,6 +34,20 @@ app.use(cors());
 db = {};
 db.users = new Datastore({ filename: 'db/users.db', autoload: true });
 db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: true });
+
+/*
+ |--------------------------------------------------------------------------
+ | Setting up PubNub
+ |--------------------------------------------------------------------------
+*/
+  
+  pubnub = pubnub.init({
+    subscribe_key: process.env.PUBNUB_SUBSCRIBE_KEY,
+    publish_key: process.env.PUBNUB_PUBLISH_KEY,
+    secret_key: process.env.PUBNUB_SECRET_KEY,
+    auth_key: process.env.PUBNUB_SECRET_KEY,
+    ssl: true
+  });
 
 /*
  |--------------------------------------------------------------------------
@@ -80,11 +95,32 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
             });
          });
 
+         grantAccess(access_token);
          res.send({token: access_token});
 
     });
   });
+  
 
+/*
+ |--------------------------------------------------------------------------
+ | Grant access to an oauth token
+ |--------------------------------------------------------------------------
+*/
+
+  var grantAccess = function(oauth_token){
+
+      var channels = ['messages', 'messages-pnpres'];
+
+      pubnub.grant({ 
+        channel: channels, 
+        auth_key: oauth_token, 
+        read: true, 
+        write: true,
+        ttl: 0,
+        callback: function(){}
+      });
+  };
 
 /*
  |--------------------------------------------------------------------------
