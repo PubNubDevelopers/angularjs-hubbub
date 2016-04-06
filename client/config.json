@@ -1,6 +1,6 @@
 {
-	"PUBNUB_SUBSCRIBE_KEY": "sub-c-204f063e-c559-11e5-b764-02ee2ddab7fe",
-	"PUBNUB_PUBLISH_KEY": "pub-c-a1cd7ac1-585e-478e-925b-65d17ce62f7d",
+	"PUBNUB_SUBSCRIBE_KEY": "sub-c-3cadc94c-fb8b-11e5-861b-02ee2ddab7fe",
+	"PUBNUB_PUBLISH_KEY": "pub-c-21e997f5-1230-4041-a18c-0df864216839",
 	"GITHUB_CLIENT_ID": "1e439e6a9047190ec980",
 	"GITHUB_REDIRECT_URI": "http://localhost:9000/",
 	"GITHUB_ACCESS_TOKEN_REQUEST_URL": "http://localhost:3000/auth/github"

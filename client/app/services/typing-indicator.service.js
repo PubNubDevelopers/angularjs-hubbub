@@ -6,7 +6,7 @@ angular.module('app')
   var self = this;
   // List of uuids that are typing
   this.usersTyping = []
-  this.channel = 'messages-channel-blog4';
+  this.channel = 'messages';
   
   // Typing indicator of the current user
   this.isCurrentUserTyping = false ;
