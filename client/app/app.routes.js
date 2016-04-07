@@ -25,9 +25,14 @@ angular
       })
       .when('/logout', { 
         template: null,
-        controller: function($location, $auth){
-          if ($auth.isAuthenticated()) { $auth.logout() }
-          $location.path('/login');
+        controller: function(AuthenticationService, $location){          
+              
+            AuthenticationService.logout().then(function(){
+                
+                $location.path('/login');
+
+            });
+            
         }
       })
       .otherwise({
