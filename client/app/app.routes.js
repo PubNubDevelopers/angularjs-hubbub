@@ -14,20 +14,12 @@ angular
     };
 
     // Init the chat
-    var initChat = function(currentUser, config, Pubnub, $auth){
+    var initChat = function(currentUser, Pubnub, $auth){
 
       return currentUser.fetch().then(function(user){
 
-        Pubnub.init({
-                      publish_key: config.PUBNUB_PUBLISH_KEY,
-                      subscribe_key: config.PUBNUB_SUBSCRIBE_KEY,
-                      uuid: user.id,
-                      auth_key: $auth.getToken(),
-                      origin: 'pubsub.pubnub.com',
-                      ssl: true,
-                      heartbeat: 40,
-                      heartbeat_interval: 60
-                  });
+        Pubnub.set_uuid(user.id) 
+        Pubnub.auth($auth.getToken())
 
       });
 
