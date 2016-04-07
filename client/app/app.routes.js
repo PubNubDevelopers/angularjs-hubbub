@@ -3,34 +3,20 @@ angular
   .config(function ($routeProvider, $authProvider) {
  
     // Redirect to the login page if not authenticated
-    var requireAuthentication = function ($q, $location, $auth) {
-      var deferred = $q.defer();
+    var requireAuthentication = function ($q, $location, $auth, AuthenticationService) {
+
       if ($auth.isAuthenticated()) {
-        deferred.resolve();
+        return AuthenticationService.login()
       } else {
-        $location.path('/login');
+        return $location.path('/login');
       }
-      return deferred.promise;
-    };
-
-    // Init the chat
-    var initChat = function(currentUser, Pubnub, $auth){
-
-      return currentUser.fetch().then(function(user){
-
-        Pubnub.set_uuid(user.id) 
-        Pubnub.auth($auth.getToken())
-
-      });
-
     };
 
     $routeProvider
       .when('/', {
         templateUrl: 'views/chat.html',
         resolve: { 
-                    requireAuthentication: requireAuthentication,
-                    initChat: initChat
+                    requireAuthentication: requireAuthentication
                   }
 
       })
