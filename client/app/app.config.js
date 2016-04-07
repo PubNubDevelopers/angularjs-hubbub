@@ -1,5 +1,17 @@
-  var app = angular.module('app')  
-  app.run(['ngNotify', function(ngNotify) {
+angular.module('app')
+  .run(['Pubnub','currentUser', 'config', function(Pubnub, currentUser, config) {
+    
+    Pubnub.init({
+                    publish_key: config.PUBNUB_PUBLISH_KEY,
+                    subscribe_key: config.PUBNUB_SUBSCRIBE_KEY,
+                    origin: 'pubsub.pubnub.com',
+                    ssl: true,
+                    heartbeat: 40,
+                    heartbeat_interval: 60
+    });
+
+  }])
+  .run(['ngNotify', function(ngNotify) {
 
       ngNotify.config({
           theme: 'paster',
