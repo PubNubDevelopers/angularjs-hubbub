@@ -1,6 +1,6 @@
 angular.module('app')
-.factory('MessageService', ['$rootScope', '$q', 'Pubnub','currentUser', 'ngNotify',
- function MessageServiceFactory($rootScope, $q, Pubnub, currentUser, ngNotify) {
+.factory('MessageService', ['$rootScope', '$q', 'Pubnub','currentUser',
+ function MessageServiceFactory($rootScope, $q, Pubnub, currentUser) {
   
   // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
@@ -12,31 +12,8 @@ angular.module('app')
   this.firstMessageTimeToken = null;
   this.messagesAllFetched = false;
 
-  var whenDisconnected = function(){
-      ngNotify.set('Connection lost. Trying to reconnect...', {
-        type: 'warn',
-        sticky: true,
-        button: false,
-      });
-  };
-
-  var whenReconnected = function(){
-      ngNotify.set('Connection re-established.', {
-          type: 'info',
-          duration: 1500
-      });
-  };
-
   var init = function() {
       
-      Pubnub.subscribe({
-          channel: self.channel,
-          disconnect : whenDisconnected, 
-          reconnect : whenReconnected,
-          noheresync: true, 
-          triggerEvents: true
-      });
-
       Pubnub.time(function(time){
         self.firstMessageTimeToken = time;
       })
