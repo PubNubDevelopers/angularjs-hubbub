@@ -1,5 +1,5 @@
 <ul class="message-list collection">
-  <li class="collection-item message-item avatar" ng-repeat="message in messages track by message.uuid">
+  <li class="collection-item message-item avatar" ng-repeat="message in messages track by message.uuid" repeat-complete="listDidRender()">
     <message-item id="{{message.uuid}}" content="{{message.content}}" sender-uuid="{{message.sender.uuid}}" sender-login="{{message.sender.login}}" date="{{message.date}}"></message-item>
   </li>
 </ul> 
