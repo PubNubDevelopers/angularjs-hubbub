@@ -1,4 +1,4 @@
-angular.module('app').directive('messageList', function($rootScope, $anchorScroll, MessageService, ngNotify) {
+angular.module('app').directive('messageList', function($rootScope, $anchorScroll, $timeout, MessageService, ngNotify) {
   return {
     restrict: "E",
     replace: true,
@@ -7,10 +7,6 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
     link: function(scope, element, attrs, ctrl) {
 
       var element = angular.element(element)
-
-      var scrollToBottom = function() {
-          element.scrollTop(element.prop('scrollHeight'));
-      };
 
       var hasScrollReachedBottom = function(){
         return element.scrollTop() + element.innerHeight() >= element.prop('scrollHeight')
@@ -24,7 +20,7 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
         ngNotify.set('Loading previous messages...','success');
 
-        var currentMessage = MessageService.getMessages()[0].uuid
+        var currentMessage = MessageService.getMessages()[0].uuid;
 
         MessageService.fetchPreviousMessages().then(function(m){
 
@@ -54,21 +50,6 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
       var init = function(){
           
-          // Scroll down when the list is populated
-          var unregister = $rootScope.$on('factory:message:populated', function(){ 
-            // Defer the call of scrollToBottom is useful to ensure the DOM elements have been loaded
-            _.defer(scrollToBottom);
-            unregister();
-
-          });
-
-          // Scroll down when new message
-          MessageService.subscribeNewMessage(function(){
-            if(scope.autoScrollDown){
-              scrollToBottom()
-            }
-          });
-
           // Watch the scroll and trigger actions
           element.bind("scroll", watchScroll);
       };
@@ -79,8 +60,24 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
     controller: function($scope){
       // Auto scroll down is acticated when first loaded
       $scope.autoScrollDown = true;
-      
+        
       $scope.messages = MessageService.getMessages();
+
+      // Hook that is called once the list is completely rendered
+      $scope.listDidRender = function(){
+        
+          if($scope.autoScrollDown)
+              $scope.scrollToBottom()
+
+      };
+
+      $scope.scrollToBottom = function() {
+          
+          var uuid_last_message = _.last($scope.messages).uuid;
+          $anchorScroll(uuid_last_message);
+
+      };
+
     }
   };
 });
