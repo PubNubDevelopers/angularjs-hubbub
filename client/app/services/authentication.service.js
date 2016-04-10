@@ -1,6 +1,6 @@
 angular.module('app')
-.factory('AuthenticationService', ['Pubnub','ngNotify', '$auth','currentUser',
- function AuthenticationService(Pubnub, ngNotify, $auth, currentUser) {
+.factory('AuthenticationService', ['Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory',
+ function AuthenticationService(Pubnub, ngNotify, $auth, currentUser, $cacheFactory) {
   
 	var whenDisconnected = function(){
 	  ngNotify.set('Connection lost. Trying to reconnect...', {
@@ -42,6 +42,9 @@ angular.module('app')
   		return $auth.logout().then(function(){
 
   			Pubnub.unsubscribe({ channel: channel });
+
+  			$cacheFactory.get('$http').removeAll();
+  			
 
   		});
 
