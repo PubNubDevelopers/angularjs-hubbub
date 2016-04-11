@@ -49,6 +49,40 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
     ssl: true
   });
 
+
+/*
+ |--------------------------------------------------------------------------
+ | Authentication required middleware
+ |--------------------------------------------------------------------------
+ */
+
+  function ensureAuthenticated(req, res, next) {
+    if (!req.header('Authorization')) {
+      return res.status(401).send({ message: 'Please make sure your request has an Authorization header' });
+    }
+    var token = req.header('Authorization').split(' ')[1];
+
+    // Check if the OAUTH2 token has been previously authorized
+
+    db.access_tokens.find({ value: token  }, function (err, docs) {
+
+      // Unauthorized
+      if(_.isEmpty(docs)){
+        return res.status(401).send({ message: 'Unauthorized' });
+      }
+      // Authorized
+      else{
+
+         req.token = token;
+         req.user_id = docs[0].user_id
+
+          next();
+      }
+    });
+    
+  }
+
+
 /*
  |--------------------------------------------------------------------------
  | Login with GitHub
@@ -104,16 +138,38 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
 
 /*
  |--------------------------------------------------------------------------
+ | Logout
+ |--------------------------------------------------------------------------
+*/
+  
+  app.post('/logout', ensureAuthenticated, function(req, res) {
+    
+    revokeAccess(req.token)
+    res.status(200).send();
+
+  });
+
+/*
+ |--------------------------------------------------------------------------
+ | Get the list of protected channels
+ |--------------------------------------------------------------------------
+*/
+
+  var getProtectedChannelList = function(){
+    return ['messages', 'messages-pnpres'];
+  };
+
+
+/*
+ |--------------------------------------------------------------------------
  | Grant access to an oauth token
  |--------------------------------------------------------------------------
 */
 
   var grantAccess = function(oauth_token){
 
-      var channels = ['messages', 'messages-pnpres'];
-
       pubnub.grant({ 
-        channel: channels, 
+        channel: getProtectedChannelList(), 
         auth_key: oauth_token, 
         read: true, 
         write: true,
@@ -121,6 +177,23 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
         callback: function(){}
       });
   };
+
+
+  /*
+ |--------------------------------------------------------------------------
+ | Revoke access to an oauth token
+ |--------------------------------------------------------------------------
+*/
+
+  var revokeAccess = function(oauth_token){
+
+      pubnub.revoke({ 
+        channel: getProtectedChannelList(), 
+        auth_key: oauth_token, 
+        callback: function(){}
+      });
+  };
+
 
 /*
  |--------------------------------------------------------------------------
