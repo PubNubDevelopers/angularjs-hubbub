@@ -25,13 +25,18 @@ angular
       })
       .when('/logout', { 
         template: null,
-        controller: function(AuthenticationService, $location){          
+        controller: function(AuthenticationService, $location, ngNotify){          
               
             AuthenticationService.logout().then(function(){
                 
                 $location.path('/login');
 
-            });
+            }).catch(function() {
+              
+              ngNotify.set('Logout failed.', { type: 'error' });
+              $location.path('/');
+
+          });
             
         }
       })
