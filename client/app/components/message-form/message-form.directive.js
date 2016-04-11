@@ -5,9 +5,8 @@ angular.module('app').directive('messageForm', function() {
     templateUrl: 'components/message-form/message-form.html',
     scope: {},
     
-    controller: function($scope, currentUser, MessageService){
+    controller: function($scope, MessageService){
 
-      $scope.currentUser = currentUser.get();
       $scope.messageContent = '';
 
       $scope.sendMessage = function(){
