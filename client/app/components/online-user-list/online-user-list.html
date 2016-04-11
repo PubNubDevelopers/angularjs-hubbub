@@ -2,9 +2,25 @@
 	<div class="online-users-number valign-wrapper">
 		<i class="material-icons">people</i><span class="valign">{{users.length}} online </span>		
 	</div>
-	<ul>
+	<ul class="online-user-list-avatars">
 	  <li ng-repeat="user in users track by user.uuid">
 	    <user-avatar uuid="{{user.uuid}}"></user-avatar>
 	  </li>
 	</ul> 
+
+  <ul id="dropdown" class="dropdown-content">
+     	<li><span><i class="material-icons tiny">perm_identity</i> {{currentUser.login}}</span></li>
+     	<li class="divider"></li>
+     	<li><a href="/#/logout"><i class="material-icons tiny">power_settings_new</i> Sign out</a></li>
+  </ul>
+       
+  <span class="valign-wrapper">
+     	<i class="material-icons white-text valign">more_vert</i>
+  </span>
+    
+  <span class="dropdown-button" data-activates="dropdown">
+    	<user-avatar class="hoverable" uuid="{{currentUser.id}}"></user-avatar>
+  </span>
+
+
 </div>
