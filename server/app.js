@@ -129,8 +129,11 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
             });
          });
 
-         grantAccess(access_token);
-         res.send({token: access_token});
+
+         var error = function(){ res.status(500).send(); } 
+         var success = function(){ res.send({token: access_token}); }
+
+         grantAccess(access_token, error, success);
 
     });
   });
@@ -144,8 +147,10 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
   
   app.post('/logout', ensureAuthenticated, function(req, res) {
     
-    revokeAccess(req.token)
-    res.status(200).send();
+    var error = function(){ res.status(500).send(); } 
+    var success = function(){ res.status(200).send(); }
+
+    revokeAccess(req.token, error, success)
 
   });
 
@@ -166,7 +171,7 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
  |--------------------------------------------------------------------------
 */
 
-  var grantAccess = function(oauth_token){
+  var grantAccess = function(oauth_token, error, success){
 
       pubnub.grant({ 
         channel: getProtectedChannelList(), 
@@ -174,7 +179,8 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
         read: true, 
         write: true,
         ttl: 0,
-        callback: function(){}
+        callback: success,
+        error: error
       });
   };
 
@@ -185,12 +191,13 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
  |--------------------------------------------------------------------------
 */
 
-  var revokeAccess = function(oauth_token){
+  var revokeAccess = function(oauth_token, error, success){
 
       pubnub.revoke({ 
         channel: getProtectedChannelList(), 
         auth_key: oauth_token, 
-        callback: function(){}
+        callback: success,
+        error: error
       });
   };
 
