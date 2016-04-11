@@ -22,11 +22,12 @@ angular.module('app')
   }])
   .config(['$authProvider','config', function($authProvider, config) {
 
-
     $authProvider.github({
       clientId: config.GITHUB_CLIENT_ID,
       redirectUri: config.GITHUB_REDIRECT_URI,
       url: config.GITHUB_ACCESS_TOKEN_REQUEST_URL,
     });
+
+    $authProvider.httpInterceptor = true;
 
   }]);

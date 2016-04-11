@@ -6,7 +6,7 @@ angular.module('app')
 	var authenticatedUser = null
 
 	var fetch = function(){
-		return $http({ cache: true, method: 'GET', url: userApiUrl, data: {token: token} })
+		return $http({ cache: true, method: 'GET', url: userApiUrl })
 				 .then(function(user){
 				 	authenticatedUser = user.data; 
 				 	return user.data
