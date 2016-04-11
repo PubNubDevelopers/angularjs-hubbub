@@ -1,3 +1,9 @@
+.dropdown-content li > span {
+  color: black;
+}
+.dropdown-content li > a {
+  color: #0277bd;
+}
 html,
 body,
 .message-container {
@@ -10,7 +16,7 @@ body,
 }
 .message-form {
   flex: 1;
-  max-height: 136px;
+  max-height: 110px;
   background-color: #0277bd;
   color: white;
 }
@@ -36,6 +42,12 @@ body,
   border-bottom: 0.1em solid #DCDCDC;
 }
 
+.dropdown-content li > span {
+  color: black;
+}
+.dropdown-content li > a {
+  color: #0277bd;
+}
 .login-container {
   height: 100%;
   flex-direction: column;
@@ -192,6 +204,12 @@ body,
   width: 100%;
 }
 
+.dropdown-content li > span {
+  color: black;
+}
+.dropdown-content li > a {
+  color: #0277bd;
+}
 .input-field .prefix.active {
   color: white;
   border-color: white;
@@ -207,6 +225,12 @@ button:focus {
   background-color: #026dae;
 }
 
+.dropdown-content li > span {
+  color: black;
+}
+.dropdown-content li > a {
+  color: #0277bd;
+}
 .ngn {
   padding: 8px 80px;
 }
@@ -218,9 +242,15 @@ button:focus {
   margin-top: 65px;
 }
 
+.dropdown-content li > span {
+  color: black;
+}
+.dropdown-content li > a {
+  color: #0277bd;
+}
 /* -------- Online user list ---------- */
 .online-user-list,
-.online-user-list ul {
+ul.online-user-list-avatars {
   display: flex;
 }
 .online-user-list {
@@ -236,7 +266,7 @@ button:focus {
   flex-wrap: nowrap;
   margin: 0;
 }
-.online-user-list li {
+ul.online-user-list-avatars li {
   display: inline-block;
 }
 .online-user-list img {
@@ -252,7 +282,19 @@ button:focus {
   font-size: 50px;
 }
 
+.dropdown-content li > span {
+  color: black;
+}
+.dropdown-content li > a {
+  color: #0277bd;
+}
 
+.dropdown-content li > span {
+  color: black;
+}
+.dropdown-content li > a {
+  color: #0277bd;
+}
 /* -------- Typing indicator box ---------- */
 .typing-indicator-box {
   flex: 1;
