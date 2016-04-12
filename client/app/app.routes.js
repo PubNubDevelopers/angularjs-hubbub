@@ -46,29 +46,6 @@ angular
             
         }
       })
-      .when('/logout_everywhere', { 
-        template: null,
-        controller: function(AuthenticationService, $location, ngNotify){          
-            
-            AuthenticationService.logoutEverywhere().then(function(){
-                
-                $location.path('/login');
-
-            }).catch(function(error) {
-
-              // The logging out process failed on the server side
-              if(error.status == 500){
-                ngNotify.set('Logout failed.', { type: 'error' });
-                $location.path('/');
-              } 
-              else{
-                $location.path('/login');
-              }
-
-          });
-            
-        }
-      })
       .otherwise({
         redirectTo: '/'
       });

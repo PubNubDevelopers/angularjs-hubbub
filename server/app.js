@@ -33,7 +33,6 @@ app.use(cors());
 
 db = {};
 db.users = new Datastore({ filename: 'db/users.db', autoload: true });
-db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: true });
 
 /*
  |--------------------------------------------------------------------------
@@ -64,19 +63,19 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
 
     // Check if the OAUTH2 token has been previously authorized
 
-    db.access_tokens.find({ value: token  }, function (err, docs) {
+    db.users.find({ oauth_token: token  }, function (err, users) {
 
       // Unauthorized
-      if(_.isEmpty(docs)){
+      if(_.isEmpty(users)){
         return res.status(401).send({ message: 'Unauthorized' });
       }
       // Authorized
       else{
 
          req.token = token;
-         req.user_id = docs[0].user_id
+         req.user_id = users[0].user_id
 
-          next();
+         next();
       }
     });
     
@@ -117,19 +116,16 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
               if(_.isEmpty(docs)){
 
                 // Create the user
-                var user = { _id: github_id }
+                var user = { _id: github_id, oauth_token: access_token }
                 db.users.insert(user);
 
               }
+              // Update the oauth2 token
+              else{
 
-              // Store access tokens if doesn't exist
+                db.users.update({ _id: github_id }, { $set: { oauth_token: access_token } } )
+              }
 
-              db.access_tokens.find({ value: access_token }, function (err, tokens) {
-                if(_.isEmpty(tokens)){
-                  var token = { value: access_token, user_id: github_id }
-                  db.access_tokens.insert(token);
-                }
-              });
 
             });
          });
@@ -144,32 +140,6 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
   });
   
 
-/*
- |--------------------------------------------------------------------------
- | Logout everywhere
- |--------------------------------------------------------------------------
-*/
-  
-  app.post('/logout_everywhere', ensureAuthenticated, function(req, res) {
-
-    db.access_tokens.find({ user_id: req.user_id }, function (err, tokens) {
-      
-      var tokens = _.map(tokens, function(token){ return token.value }) ;
-      console.log('tokens', tokens)
-
-      var error = function(){ res.status(500).send(); } 
-
-      var success = function(){ 
-        db.access_tokens.remove({ value: { $in: tokens }}, { multi: true })
-        res.status(200).send(); 
-      }
-
-      revokeAccess(tokens, error, success)
-
-    });
-
-  });
-
   /*
  |--------------------------------------------------------------------------
  | Logout
@@ -180,11 +150,11 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
     
     var error = function(){ res.status(500).send(); } 
     var success = function(){ 
-      db.access_tokens.remove({ value: req.token}, { multi: true })
+      db.users.update({ oauth_token: req.token }, { $set: { oauth_token: null } } )
       res.status(200).send(); 
     }
 
-    revokeAccess(token, error, success)
+    revokeAccess(req.token, error, success)
 
   });
 
