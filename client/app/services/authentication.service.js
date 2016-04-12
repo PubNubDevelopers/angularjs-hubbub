@@ -1,6 +1,6 @@
 angular.module('app')
-.factory('AuthenticationService', ['Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory', '$http', 'config',
- function AuthenticationService(Pubnub, ngNotify, $auth, currentUser, $cacheFactory, $http, config) {
+.factory('AuthenticationService', ['Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory', '$http', 'config', '$location',
+ function AuthenticationService(Pubnub, ngNotify, $auth, currentUser, $cacheFactory, $http, config, $location) {
   
 	var whenDisconnected = function(){
 	  ngNotify.set('Connection lost. Trying to reconnect...', {
@@ -17,6 +17,23 @@ angular.module('app')
 	  });
 	};
 
+	var whenError = function(error){
+
+		console.log(error)
+		if(error.status == 403){
+
+			ngNotify.set('You have been remotely logged out.', {
+		    type: 'warn',
+		    sticky: true,
+		    button: true,
+	  	});
+
+	  	clientSignout();
+	  	$location.path('/login');
+
+		}
+	};
+
 	var channel = "messages";
 
 
@@ -27,12 +44,33 @@ angular.module('app')
 
 	};
 
+	var serverSignoutEverywhere = function(){
+		 
+		 var url = config.SERVER_URL + 'logout_everywhere'
+		 return $http({ method: 'POST', url: url })
+
+	};
+
+	var clientSignout = function(){
+
+		return $auth.logout().then(function(){
+
+				Pubnub.unsubscribe({ channel: channel });
+  			$cacheFactory.get('$http').removeAll();
+
+		});
+
+	};
+
 	///////////////////////////////////////////////////
 
   var login = function(){
 
+  	ngNotify.dismiss();
+
   	return currentUser.fetch().then(function(){
-  		
+  			
+  		console.log($auth.getToken())
   		Pubnub.set_uuid(currentUser.get().id) 
     	Pubnub.auth($auth.getToken())
 
@@ -40,6 +78,7 @@ angular.module('app')
 	          channel: channel,
 	          disconnect : whenDisconnected, 
 	          reconnect : whenReconnected,
+	          error: whenError,
 	          noheresync: true, 
 	          triggerEvents: true
 	    });
@@ -51,20 +90,27 @@ angular.module('app')
 
   		return serverSignout().then(function(){
 
-  			$auth.logout();
+  			clientSignout();
 
-  		}).then(function(){
+  		});			
 
-  			Pubnub.unsubscribe({ channel: channel });
-  			$cacheFactory.get('$http').removeAll();
+  };
+
+   var logoutEverywhere = function(){
+
+  		return serverSignoutEverywhere().then(function(){
+
+  			clientSignout();
 
   		});  			
 
   };
 
+
   return {
     login: login,
-    logout: logout
+    logout: logout,
+    logoutEverywhere: logoutEverywhere
   };
 
 }]);
