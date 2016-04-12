@@ -122,9 +122,14 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
 
               }
 
-              // Store access tokens
-              var token = { value: access_token, user_id: github_id }
-              db.access_tokens.insert(token);
+              // Store access tokens if doesn't exist
+
+              db.access_tokens.find({ value: access_token }, function (err, tokens) {
+                if(_.isEmpty(tokens)){
+                  var token = { value: access_token, user_id: github_id }
+                  db.access_tokens.insert(token);
+                }
+              });
 
             });
          });
@@ -141,6 +146,32 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
 
 /*
  |--------------------------------------------------------------------------
+ | Logout everywhere
+ |--------------------------------------------------------------------------
+*/
+  
+  app.post('/logout_everywhere', ensureAuthenticated, function(req, res) {
+
+    db.access_tokens.find({ user_id: req.user_id }, function (err, tokens) {
+      
+      var tokens = _.map(tokens, function(token){ return token.value }) ;
+      console.log('tokens', tokens)
+
+      var error = function(){ res.status(500).send(); } 
+
+      var success = function(){ 
+        db.access_tokens.remove({ value: { $in: tokens }}, { multi: true })
+        res.status(200).send(); 
+      }
+
+      revokeAccess(tokens, error, success)
+
+    });
+
+  });
+
+  /*
+ |--------------------------------------------------------------------------
  | Logout
  |--------------------------------------------------------------------------
 */
@@ -148,9 +179,12 @@ db.access_tokens = new Datastore({ filename: 'db/access_tokens.db', autoload: tr
   app.post('/logout', ensureAuthenticated, function(req, res) {
     
     var error = function(){ res.status(500).send(); } 
-    var success = function(){ res.status(200).send(); }
+    var success = function(){ 
+      db.access_tokens.remove({ value: req.token}, { multi: true })
+      res.status(200).send(); 
+    }
 
-    revokeAccess(req.token, error, success)
+    revokeAccess(token, error, success)
 
   });
 
