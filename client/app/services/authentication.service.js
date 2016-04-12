@@ -19,10 +19,9 @@ angular.module('app')
 
 	var whenError = function(error){
 
-		console.log(error)
 		if(error.status == 403){
 
-			ngNotify.set('You have been remotely logged out.', {
+			ngNotify.set('You have been logged out.', {
 		    type: 'warn',
 		    sticky: true,
 		    button: true,
@@ -44,21 +43,13 @@ angular.module('app')
 
 	};
 
-	var serverSignoutEverywhere = function(){
-		 
-		 var url = config.SERVER_URL + 'logout_everywhere'
-		 return $http({ method: 'POST', url: url })
-
-	};
 
 	var clientSignout = function(){
 
-		return $auth.logout().then(function(){
+		$auth.logout()
+		Pubnub.unsubscribe({ channel: channel });
+  	$cacheFactory.get('$http').removeAll();
 
-				Pubnub.unsubscribe({ channel: channel });
-  			$cacheFactory.get('$http').removeAll();
-
-		});
 
 	};
 
@@ -70,7 +61,6 @@ angular.module('app')
 
   	return currentUser.fetch().then(function(){
   			
-  		console.log($auth.getToken())
   		Pubnub.set_uuid(currentUser.get().id) 
     	Pubnub.auth($auth.getToken())
 
@@ -96,21 +86,10 @@ angular.module('app')
 
   };
 
-   var logoutEverywhere = function(){
-
-  		return serverSignoutEverywhere().then(function(){
-
-  			clientSignout();
-
-  		});  			
-
-  };
-
 
   return {
     login: login,
-    logout: logout,
-    logoutEverywhere: logoutEverywhere
+    logout: logout
   };
 
 }]);
