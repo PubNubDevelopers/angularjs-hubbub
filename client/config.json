@@ -1,8 +1,0 @@
-{
-	"PUBNUB_SUBSCRIBE_KEY": "sub-c-61b076f2-fed0-11e5-ba5f-0619f8945a4f",
-	"PUBNUB_PUBLISH_KEY": "pub-c-d22410bf-edc6-44fb-9b5a-e9843bbda46d",
-	"GITHUB_CLIENT_ID": "1e439e6a9047190ec980",
-	"GITHUB_REDIRECT_URI": "http://localhost:9000/",
-	"GITHUB_ACCESS_TOKEN_REQUEST_URL": "http://localhost:3000/auth/github",
-	"SERVER_URL": "http://localhost:3000/"
-}
