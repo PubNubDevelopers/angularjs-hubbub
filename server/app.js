@@ -44,7 +44,7 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
     subscribe_key: process.env.PUBNUB_SUBSCRIBE_KEY,
     publish_key: process.env.PUBNUB_PUBLISH_KEY,
     secret_key: process.env.PUBNUB_SECRET_KEY,
-    auth_key: process.env.PUBNUB_SECRET_KEY,
+    auth_key: 'NodeJS-Server',
     ssl: true
   });
 
@@ -78,7 +78,6 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
          next();
       }
     });
-    
   }
 
 
@@ -96,7 +95,7 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       code: req.body.code,
       client_id: process.env.GITHUB_CLIENT_ID,
       client_secret: process.env.GITHUB_CLIENT_SECRET,
-      redirect_uri: process.env.GITHUB_REDIRECT_URI
+      redirect_uri: req.body.redirectUri
     };
 
     // Exchange authorization code for access token.
@@ -107,6 +106,10 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
 
          // Retrieve profile information about the current user.
          github_client.me().info(function(err, profile){
+
+            if(err){
+                return res.status(400).send({ message: 'User not found' });
+            }
 
             var github_id = profile['id'];
 
