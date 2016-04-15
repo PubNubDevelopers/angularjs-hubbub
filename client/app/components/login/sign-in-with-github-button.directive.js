@@ -5,15 +5,19 @@ angular.module('app').directive('signInWithGithubButton', function() {
 
     controller: function($scope, $auth, $location, ngNotify){
 
-      $scope.authenticate = function(provider) {
+      $scope.authenticate = function() {
       	
-      		$auth.authenticate(provider)
+      		$auth.authenticate('github')
 		    	.then(function(response) {
 		    		$location.path('/'); 
 		  		})
 		  		.catch(function(response) {
 		    	
-		    	 ngNotify.set('Authentification failed.', { type: 'error' });
+		    	 ngNotify.set('Authentication failed.', {
+              type: 'error',
+              sticky: true,
+              button: true,
+            });
 		  		});
 
 		  };
