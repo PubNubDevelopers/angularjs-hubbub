@@ -31,6 +31,7 @@ module.exports = function(config) {
       'bower_components/lodash/lodash.js',
       'bower_components/ng-notify/src/scripts/ng-notify.js',
       'bower_components/satellizer/satellizer.js',
+      'bower_components/particles.js/particles.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",
