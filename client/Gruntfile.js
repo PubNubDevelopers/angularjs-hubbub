@@ -328,17 +328,6 @@ module.exports = function (grunt) {
     //   dist: {}
     // },
 
-    imagemin: {
-      dist: {
-        files: [{
-          expand: true,
-          cwd: '<%= yeoman.app %>/images',
-          src: '{,*/}*.{png,jpg,jpeg,gif}',
-          dest: '<%= yeoman.dist %>/images'
-        }]
-      }
-    },
-
     svgmin: {
       dist: {
         files: [{
@@ -414,20 +403,21 @@ module.exports = function (grunt) {
             'images/{,*/}*.{webp}',
             'styles/fonts/{,*/}*.*'
           ]
-        }, {
-          expand: true,
-          cwd: '.tmp/images',
-          dest: '<%= yeoman.dist %>/images',
-          src: ['generated/*']
         },
         {
             expand: true,
-            dot: true,
-            cwd: 'components/Materialize/dist', // change this for font-awesome
-            src: ['font/*.*'],
+            dot: true, 
+            cwd: 'bower_components/Materialize/dist/',
+            src: ['font/*/*.*'],
             dest: '<%= yeoman.dist %>'
-        }
-        ]
+        },
+        {
+            expand: true,
+            dot: true, 
+            cwd: '<%= yeoman.app %>/assets/',
+            src: ['**'],
+            dest: '<%= yeoman.dist %>/assets/'
+        }]
       },
       styles: {
         expand: true,
@@ -448,7 +438,6 @@ module.exports = function (grunt) {
       ],
       dist: [
         'copy:styles',
-        'imagemin',
         'svgmin'
       ]
     },
