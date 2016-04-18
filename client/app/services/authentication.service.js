@@ -33,9 +33,6 @@ angular.module('app')
 		}
 	};
 
-	var channel = "messages";
-
-
 	var serverSignout = function(){
 		 
 		 var url = config.SERVER_URL + 'logout'
@@ -47,9 +44,19 @@ angular.module('app')
 	var clientSignout = function(){
 
 		$auth.logout()
-		Pubnub.unsubscribe({ channel: channel });
-  	$cacheFactory.get('$http').removeAll();
 
+		//---------------------------------------------------------
+  	var channels = [	
+									'messages', 
+									currentUser.get().id.toString() + '_presence'
+							 ]
+
+		pubnub.unsubscribe({ channel: channels });
+		//---------------------------------------------------------
+		// Should be replaced by:
+		// pubnub.unsubscribe({ channel: Pubnub.get_subscibed_channels });
+
+  	$cacheFactory.get('$http').removeAll();
 
 	};
 
@@ -60,12 +67,17 @@ angular.module('app')
   	ngNotify.dismiss();
 
   	return currentUser.fetch().then(function(){
-  			
+
   		Pubnub.set_uuid(currentUser.get().id) 
     	Pubnub.auth($auth.getToken())
 
+    	var channels = [	
+    										'messages', 
+    										currentUser.get().id.toString() + '_presence'
+    								 ]
+
 	    Pubnub.subscribe({
-	          channel: channel,
+	          channel: channels,
 	          disconnect : whenDisconnected, 
 	          reconnect : whenReconnected,
 	          error: whenError,
@@ -78,7 +90,7 @@ angular.module('app')
 
   var logout = function(){
 
-  		return serverSignout().then(function(){
+  		return serverSignout().finally(function(){
 
   			clientSignout();
 
