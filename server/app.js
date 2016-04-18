@@ -13,6 +13,7 @@ var github = require('octonode');
 var _ = require('lodash');
 var dotenv = require('dotenv').config()
 var pubnub = require('pubnub');
+var Q = require('q');
 
 var app = express();
 
@@ -72,9 +73,8 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       // Authorized
       else{
 
-         req.token = token;
-         req.user_id = users[0].user_id
-
+         // Adding user information to the request
+         req.user = users[0]
          next();
       }
     });
@@ -112,14 +112,15 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
             }
 
             var github_id = profile['id'];
+            var user = { _id: github_id, oauth_token: access_token }
 
             db.users.find({ _id: github_id  }, function (err, docs) {
+
 
               // The user doesn't have an account already
               if(_.isEmpty(docs)){
 
                 // Create the user
-                var user = { _id: github_id, oauth_token: access_token }
                 db.users.insert(user);
 
               }
@@ -129,15 +130,15 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
                 db.users.update({ _id: github_id }, { $set: { oauth_token: access_token } } )
               }
 
-
             });
+
+           grantAccess(user).then(function(){
+              res.send({token: access_token});
+           }).catch(function(){
+              res.status(500).send();
+           })
+
          });
-
-
-         var error = function(){ res.status(500).send(); } 
-         var success = function(){ res.send({token: access_token}); }
-
-         grantAccess(access_token, error, success);
 
     });
   });
@@ -154,7 +155,7 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
     // Revoke access to the Access token
     // https://developer.github.com/v3/oauth_authorizations/#reset-an-authorization
     // POST /applications/:client_id/tokens/:access_token
-    var resetTokenUrl = "https://api.github.com/applications/"+process.env.GITHUB_CLIENT_ID+'/tokens/'+ req.token;
+    var resetTokenUrl = "https://api.github.com/applications/"+process.env.GITHUB_CLIENT_ID+'/tokens/'+ req.user.oauth_token;
     var authorization = new Buffer(process.env.GITHUB_CLIENT_ID + ":" + process.env.GITHUB_CLIENT_SECRET).toString("base64");
 
     var headers = { 
@@ -166,12 +167,12 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
     request.post({ url: resetTokenUrl, headers: headers }, function(err, response, payload) {
       if (!err && response.statusCode == 200){
 
-            var revokeError = function(){ res.status(500).send(); } 
-            var revokeSuccess = function(){ 
-              db.users.update({ oauth_token: req.token }, { $set: { oauth_token: null } } )
+             revokeAccess(req.user).then(function(){
+              db.users.update({ oauth_token: req.user.oauth_token }, { $set: { oauth_token: null } } )
               res.status(200).send(); 
-            } 
-            revokeAccess(req.token, revokeError, revokeSuccess);    
+             }).catch(function(){
+                res.status(500).send();
+             })
       }
       else{
           res.status(500).send();
@@ -186,8 +187,17 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
  |--------------------------------------------------------------------------
 */
 
-  var getProtectedChannelList = function(){
-    return ['messages', 'messages-pnpres'];
+  var getProtectedChannelList = function(user){
+    return {
+      'readOnly': [],
+      'writeOnly': [],
+      'readAndWrite': [
+                        'messages',
+                        'messages-pnpres',
+                         user._id+'_presence',
+                         user._id+'_presence-pnpres'
+                      ]
+    }
   };
 
 
@@ -197,17 +207,26 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
  |--------------------------------------------------------------------------
 */
 
-  var grantAccess = function(oauth_token, error, success){
 
-      pubnub.grant({ 
-        channel: getProtectedChannelList(), 
-        auth_key: oauth_token, 
-        read: true, 
-        write: true,
-        ttl: 0,
-        callback: success,
-        error: error
-      });
+  var grantAccess = function(user){
+
+      var grant = function(args){
+
+        var deferred = Q.defer();
+        args['callback'] = function(res){ deferred.resolve(res); }
+        args['error'] = function(res){ deferred.reject(res); }
+        pubnub.grant(args);
+        return deferred.promise;
+
+      }
+
+      return grant({
+              channel: getProtectedChannelList(user)['readAndWrite'], 
+              auth_key: user.oauth_token, 
+              read: true, 
+              write: true,
+              ttl: 0
+            })
   };
 
 
@@ -217,13 +236,21 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
  |--------------------------------------------------------------------------
 */
 
-  var revokeAccess = function(oauth_token, error, success){
+  var revokeAccess = function(user){
 
-      pubnub.revoke({ 
-        channel: getProtectedChannelList(), 
-        auth_key: oauth_token, 
-        callback: success,
-        error: error
+      var revoke = function(args){
+
+        var deferred = Q.defer();
+        args['callback'] = function(res){ deferred.resolve(res); }
+        args['error'] = function(res){ deferred.reject(res); }
+        pubnub.revoke(args);
+        return deferred.promise;
+
+      }
+
+      return revoke({ 
+        channel: getProtectedChannelList(user)['readAndWrite'], 
+        auth_key: user.oauth_token
       });
   };
 
