@@ -151,13 +151,32 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
   
   app.post('/logout', ensureAuthenticated, function(req, res) {
     
-    var error = function(){ res.status(500).send(); } 
-    var success = function(){ 
-      db.users.update({ oauth_token: req.token }, { $set: { oauth_token: null } } )
-      res.status(200).send(); 
+    // Revoke access to the Access token
+    // https://developer.github.com/v3/oauth_authorizations/#reset-an-authorization
+    // POST /applications/:client_id/tokens/:access_token
+    var resetTokenUrl = "https://api.github.com/applications/"+process.env.GITHUB_CLIENT_ID+'/tokens/'+ req.token;
+    var authorization = new Buffer(process.env.GITHUB_CLIENT_ID + ":" + process.env.GITHUB_CLIENT_SECRET).toString("base64");
+
+    var headers = { 
+      "Authorization": "Basic "+authorization,
+      'User-Agent': 'NodeJS'
     }
 
-    revokeAccess(req.token, error, success)
+    // Revoke access to the token
+    request.post({ url: resetTokenUrl, headers: headers }, function(err, response, payload) {
+      if (!err && response.statusCode == 200){
+
+            var revokeError = function(){ res.status(500).send(); } 
+            var revokeSuccess = function(){ 
+              db.users.update({ oauth_token: req.token }, { $set: { oauth_token: null } } )
+              res.status(200).send(); 
+            } 
+            revokeAccess(req.token, revokeError, revokeSuccess);    
+      }
+      else{
+          res.status(500).send();
+      }
+    });
 
   });
 
