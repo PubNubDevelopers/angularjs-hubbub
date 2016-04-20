@@ -35,8 +35,8 @@ body,
 .chip {
   font-style: italic;
 }
-.mdi-communication-chat {
-  color: white;
+i.material-icons {
+  line-height: inherit;
 }
 .collection .collection-item:last-child {
   border-bottom: 0.1em solid #DCDCDC;
@@ -272,6 +272,7 @@ ul.online-user-list-avatars li {
 .online-user-list img {
   margin: 4px;
   width: 50px;
+  margin-right: 10px;
 }
 .online-users-number {
   color: white;
