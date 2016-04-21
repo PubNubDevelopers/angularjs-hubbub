@@ -4,16 +4,6 @@
 .dropdown-content li > a {
   color: #0277bd;
 }
-html,
-body,
-.message-container {
-  height: 100%;
-  flex-direction: column;
-}
-.message-container,
-.message-form {
-  display: flex;
-}
 .message-form {
   flex: 1;
   max-height: 110px;
@@ -23,15 +13,59 @@ body,
 .message-form button {
   background-color: #0284d1;
 }
-.message-list {
-  flex: 1;
-  overflow: auto;
-  margin-top: 0;
-  margin-bottom: 0;
-}
 .message-form .input-field input {
   border-color: #FFFFFF;
 }
+
+.dropdown-content li > span {
+  color: black;
+}
+.dropdown-content li > a {
+  color: #0277bd;
+}
+/*
+   ------------------CHAT-------------------
+  __________________________________________
+  |            |                            |
+  |            |     ONLINE-USER-LIST       | 
+  |            |____________________________|
+  |            |                            |
+  |            |       MESSAGE-LIST         |
+  |            |   ______________________   |
+  |   FRIEND   |  |    MESSAGE-ITEM     |   |
+  |    LIST    |  |_____________________|   |
+  |            |____________________________|
+  |            |      TYPING-INDICATOR      | 
+  |            |____________________________|
+  |            |                            |
+  |            |       MESSAGE-FORM         |
+  |____________|____________________________|
+   CHAT-SIDEBAR          CHAT-MAIN
+
+*/
+/* -----------------------GLOBAL----------------- */
+.chat {
+  display: flex;
+  /* 
+    On small displays we want each .color stacked.
+    Flexbox let's us determine stacking direction via
+    flex-direction: column;
+  */
+  flex-direction: row;
+  height: 100vh;
+}
+.chat-sidebar {
+  display: flex;
+  flex-direction: column;
+  flex: 1 0 10em;
+  background-color: #02619a;
+}
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  flex: 10 0 10em;
+}
+/* -----------------------OTHERS----------------- */
 .chip {
   font-style: italic;
 }
@@ -40,6 +74,30 @@ i.material-icons {
 }
 .collection .collection-item:last-child {
   border-bottom: 0.1em solid #DCDCDC;
+}
+
+.friend-list {
+  flex: 1;
+  overflow: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+  border-radius: 0px;
+  border: none;
+}
+.friend-list .collection-item.avatar {
+  min-height: 64px;
+}
+.friend-list .collection-item {
+  background-color: transparent;
+  border: none;
+  color: white;
+}
+.online-status {
+  color: #cccccc;
+}
+.online-status i.tiny {
+  color: #e53935;
+  font-size: 0.7rem;
 }
 
 .dropdown-content li > span {
@@ -225,6 +283,13 @@ button:focus {
   background-color: #026dae;
 }
 
+.message-list {
+  flex: 1;
+  overflow: auto;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
 .dropdown-content li > span {
   color: black;
 }
@@ -236,7 +301,7 @@ button:focus {
 }
 .ngn-success {
   background-color: rgba(2, 138, 219, 0.7);
-  margin-top: 65px;
+  margin-top: 63px;
 }
 .ngn-grimace {
   margin-top: 65px;
@@ -254,7 +319,7 @@ ul.online-user-list-avatars {
   display: flex;
 }
 .online-user-list {
-  flex: 1;
+  flex: 1 0 auto;
   margin: 0;
   max-height: 65px;
   background-color: #0277bd;
@@ -300,7 +365,7 @@ ul.online-user-list-avatars li {
 .typing-indicator-box {
   flex: 1;
   margin: 0;
-  max-height: 45px;
+  min-height: 45px;
   background-color: rgba(2, 119, 189, 0.4);
 }
 .typing-indicator-box ul {
