@@ -241,11 +241,25 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
                         'messages',
                         'messages-pnpres',
                          user._id+'_presence',
-                         user._id+'_presence-pnpres'
+                         user._id+'_presence-pnpres',
                       ]
     }
   };
 
+
+/*
+ |--------------------------------------------------------------------------
+ | Get the list of protected channel groups
+ |--------------------------------------------------------------------------
+*/
+
+  // There is no concept of write access with channel groups. 
+  // You can only subscribe or manage a channel group
+  var getProtectedChannelGroupList = function(user){
+    return [
+              user._id+'_friends_presence'
+           ]
+  };
 
 /*
  |--------------------------------------------------------------------------
@@ -272,7 +286,12 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
               read: true, 
               write: true,
               ttl: 0
-            })
+            }).then(grant({
+              channel_group: getProtectedChannelGroupList(user), 
+              auth_key: user.oauth_token, 
+              read: true, 
+              ttl: 0
+            }));
   };
 
 
@@ -295,9 +314,15 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       }
 
       return revoke({ 
-        channel: getProtectedChannelList(user)['readAndWrite'], 
-        auth_key: user.oauth_token
-      });
+
+          channel: getProtectedChannelList(user)['readAndWrite'], 
+          auth_key: user.oauth_token
+        
+        }).then(revoke({
+              
+              channel_group: getProtectedChannelGroupList(user), 
+              auth_key: user.oauth_token, 
+        }));
   };
 
 
