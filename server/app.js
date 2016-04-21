@@ -143,6 +143,52 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
     });
   });
   
+  /*
+ |--------------------------------------------------------------------------
+ | GET /api/friends
+ |--------------------------------------------------------------------------
+*/
+
+  app.get('/api/friends', ensureAuthenticated, function(req, res) {
+
+    var github_client = github.client(req.user.oauth_token);
+    github_client.requestDefaults['qs'] = {page:1, per_page: 100};
+    var ghme = github_client.me()
+
+    ghme.followers(function(err, followers){
+
+        if (!err && res.statusCode == 200){
+
+          ghme.following(function(err, following){
+
+
+              if (!err && res.statusCode == 200){ 
+
+                var comparator = function(friend1, friend2){
+                  return friend1.id == friend2.id
+                };  
+
+                var friends = _.unionWith(followers,following, comparator);
+
+                // Each user are publishing is 
+
+                res.status(200).send(friends); 
+
+              }
+              else{
+                res.status(500).send();
+              }
+          }); 
+
+        }
+        else{
+          res.status(500).send();
+        }
+
+    }); 
+
+  });
+
 
   /*
  |--------------------------------------------------------------------------
