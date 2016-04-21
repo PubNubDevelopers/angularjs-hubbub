@@ -1,36 +1,50 @@
 @import "theme.less";
 
-html, body, .message-container{
-   height: 100%;
-  flex-direction: column;
-}
+/*
+   ------------------CHAT-------------------
+  __________________________________________
+  |            |                            |
+  |            |     ONLINE-USER-LIST       | 
+  |            |____________________________|
+  |            |                            |
+  |            |       MESSAGE-LIST         |
+  |            |   ______________________   |
+  |            |  |    MESSAGE-ITEM     |   |
+  |            |  |_____________________|   |
+  |            |____________________________|
+  |            |      TYPING-INDICATOR      | 
+  |            |____________________________|
+  |            |                            |
+  |            |       MESSAGE-FORM         |
+  |____________|____________________________|
+   CHAT-SIDEBAR          CHAT-MAIN
 
-.message-container, .message-form {
+*/
+
+
+.chat {
   display: flex;
+  flex-direction: row;
+  height: 100vh;
 }
 
-.message-form {
-  flex:1;
-  max-height:110px;
-  background-color: @base-color;
-  color: white;
+.chat-sidebar {
+
+  display: flex;
+  flex-direction: column; 
+  flex: 1 0 10em; 
+  background-color: @base-color-dark2;
 }
 
-.message-form button{
-  background-color: @button-color;
+.chat-main {
+  display: flex;
+  flex-direction: column;
+  flex: 10 0 10em;  
 }
 
 
-.message-list {
-  flex: 1; 
-  overflow: auto;
-  margin-top:0;
-  margin-bottom:0;
-}
 
-.message-form .input-field input {
- border-color: #FFFFFF;
-}
+/* -----------------------OTHERS----------------- */
 
 .chip {
  font-style: italic;
@@ -43,5 +57,3 @@ i.material-icons{
 .collection .collection-item:last-child {
   border-bottom: 0.1em solid #DCDCDC;
 }
-
-
