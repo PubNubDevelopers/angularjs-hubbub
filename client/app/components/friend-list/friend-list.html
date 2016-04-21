@@ -1,0 +1,5 @@
+<ul class="friend-list collection">
+  <li class="collection-item avatar" ng-repeat="friend in friends track by friend.id" repeat-complete="listDidRender()"><user-avatar uuid="{{friend.id}}"></user-avatar>
+  <div class="login">{{friend.login}}</div><div class="online-status"><i class="tiny material-icons">lens</i> offline</div>
+  </li>
+</ul> 
