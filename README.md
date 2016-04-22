@@ -9,7 +9,7 @@ This is a full AngularJS chat app built with PubNub
 - Load earlier messages with infinite scroll
 - Typing indicator
 - Realtime user roster
-- Oauth2 authentication through Gitub
+- OAuth 2.0 authentication flow with Github OAuth
 - Private and secure communication
 
 ## Roadmap 
@@ -32,6 +32,7 @@ Learn how to build this chat app by following these easy-to-follow tutorials:
 - [Building an AngularJS Chat App with a User Roster Using Presence API](https://www.pubnub.com/blog/2016-03-15-building-an-angularjs-chat-app-with-a-real-time-user-roster-and-typing-indicator-using-presence-api/)
 - [Displaying a Typing Indicator in Your AngularJS Chat App Using Custom State
 API](https://www.pubnub.com/blog/2016-03-21-displaying-a-typing-indicator-in-your-angularjs-chat-app/)
+- [AngularJS User Authentication with OAuth 2.0 and Access Manager](https://www.pubnub.com/blog/2016-04-20-angularjs-user-authentication-with-oauth-2-access-manager/)
 
 
 ## Quick start instructions
