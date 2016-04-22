@@ -176,18 +176,17 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
 
           ghme.following(function(err, following){
 
+              if (!err && res.statusCode == 200){  
 
-              if (!err && res.statusCode == 200){ 
+                var friends = _.unionWith(followers,following, function(friend1,friend2){
+                    return friend1.id == friend2.id
+                });
 
-                var comparator = function(friend1, friend2){
-                  return friend1.id == friend2.id
-                };  
-
-                var friends = _.unionWith(followers,following, comparator);
-
-                // Each user are publishing is 
-
-                res.status(200).send(friends); 
+                createOwnUserFriendsPresenceChannelGroup(req.user, friends).then(function(){
+                   res.status(200).send(friends);
+                }).catch(function(){
+                   res.status(500).send();
+                })
 
               }
               else{
@@ -341,6 +340,34 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
         }));
   };
 
+
+  /*
+   |--------------------------------------------------------------------------
+   | Create the own user friends channel group
+   |--------------------------------------------------------------------------
+  */
+
+  // All the friends are automatically publishing their presence status to their own presence channel called userID_presence
+  // We aggregate their presence events in the own user channel group called userID_friends_presence
+  // The user subscribe to this channel group to to see his friends online/offline status be updated in realtime. 
+  
+  var createOwnUserFriendsPresenceChannelGroup = function(user, friends){
+
+      var deferred = Q.defer();
+        
+      var friends_presence_channels = _.map(friends, function(friend){ return friend.id+"_presence" });
+      var user_friends_presence_channel = user._id+'_friends_presence'
+
+      pubnub.channel_group_add_channel({
+        callback: function(res){ deferred.resolve(res) },
+        error: function(res){ deferred.reject(res) },
+        channel_group: user_friends_presence_channel,
+        channel: friends_presence_channels
+      }); 
+
+      return deferred.promise;
+
+  }
 
 /*
  |--------------------------------------------------------------------------
