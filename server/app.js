@@ -271,9 +271,10 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
   // There is no concept of write access with channel groups. 
   // You can only subscribe or manage a channel group
   var getProtectedChannelGroupList = function(user){
-    return [
-              user._id+'_friends_presence'
-           ]
+    return _.join([
+                    user._id+'_friends_presence',
+                    user._id+'_friends_presence-pnpres' 
+                  ],',')
   };
 
 /*
