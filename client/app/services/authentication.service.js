@@ -1,6 +1,6 @@
 angular.module('app')
-.factory('AuthenticationService', ['Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory', '$http', 'config', '$location',
- function AuthenticationService(Pubnub, ngNotify, $auth, currentUser, $cacheFactory, $http, config, $location) {
+.factory('AuthenticationService', ['$rootScope','Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory', '$http', 'config', '$location',
+ function AuthenticationService($rootScope,Pubnub, ngNotify, $auth, currentUser, $cacheFactory, $http, config, $location) {
   
 	var whenDisconnected = function(){
 	  ngNotify.set('Connection lost. Trying to reconnect...', {
@@ -51,10 +51,12 @@ angular.module('app')
 									currentUser.get().id.toString() + '_presence'
 							 ]
 
-		pubnub.unsubscribe({ channel: channels });
-		//---------------------------------------------------------
-		// Should be replaced by:
-		// pubnub.unsubscribe({ channel: Pubnub.get_subscibed_channels });
+		var channel_groups = [ 
+    												currentUser.get().id.toString() + '_friends_presence'													
+    										 ]
+
+		Pubnub.unsubscribe({ channel: channels });
+		Pubnub.unsubscribe({ channel_group: channel_groups });
 
   	$cacheFactory.get('$http').removeAll();
 
@@ -72,8 +74,9 @@ angular.module('app')
     	Pubnub.auth($auth.getToken())
 
     	var channels = [	
-    										'messages', 
-    										currentUser.get().id.toString() + '_presence'
+    									  'messages', 
+    									  // Automatically publish presence events on the own user presence channel
+    										currentUser.get().id.toString() + '_presence'  
     								 ]
 
 	    Pubnub.subscribe({
@@ -84,6 +87,16 @@ angular.module('app')
 	          noheresync: true, 
 	          triggerEvents: true
 	    });
+
+	    var channel_groups = [ 
+    						    currentUser.get().id.toString() + '_friends_presence-pnpres'													
+    						 ]
+
+	    Pubnub.subscribe({
+	          channel_group: channel_groups,
+	          noheresync: true,
+	          triggerEvents: ['callback']
+	    });    	
 
 	  });
   };
