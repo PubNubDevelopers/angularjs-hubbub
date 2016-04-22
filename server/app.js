@@ -40,14 +40,29 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
  | Setting up PubNub
  |--------------------------------------------------------------------------
 */
-  
+ 
+  console.log('------------ Initing PubNub ----------------')
   pubnub = pubnub.init({
     subscribe_key: process.env.PUBNUB_SUBSCRIBE_KEY,
     publish_key: process.env.PUBNUB_PUBLISH_KEY,
     secret_key: process.env.PUBNUB_SECRET_KEY,
-    auth_key: 'NodeJS-Server',
-    ssl: true
+    auth_key: process.env.SERVER_PUBNUB_AUTH_KEY,
+    ssl: true,
+    error: function(err){ console.log(err) }
   });
+
+  // Grant to the SERVER_AUTH_KEY the manage permission in order to beeing able to add/remove channels to any channel group.
+  console.log('------------ Granting channel group manage permission to the server ----------------')
+  pubnub.grant({
+                  channel_group: ':',  // The wildcard ':' will grant access to any channel group
+                  auth_key: process.env.SERVER_PUBNUB_AUTH_KEY, 
+                  manage: true, 
+                  read: true,
+                  write: true,
+                  ttl: 0,
+                  callback: function(res){ console.log(res) },
+                  error: function(err){ console.log(err) }
+               });
 
 
 /*
