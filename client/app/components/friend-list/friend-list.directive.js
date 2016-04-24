@@ -8,7 +8,7 @@ angular.module('app').directive('friendList', function() {
     controller: function($scope, Friends){
 
       Friends.all().then(function(friends) {
-        $scope.friends = friends.data;
+        $scope.friends = friends;
       });
 
     }
