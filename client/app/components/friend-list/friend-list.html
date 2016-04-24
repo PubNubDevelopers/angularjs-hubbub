@@ -1,5 +1,13 @@
 <ul class="friend-list collection">
-  <li class="collection-item avatar" ng-repeat="friend in friends track by friend.id" repeat-complete="listDidRender()"><user-avatar uuid="{{friend.id}}"></user-avatar>
-  <div class="login">{{friend.login}}</div><div class="online-status"><i class="tiny material-icons">lens</i> offline</div>
+  <li class="collection-item avatar" ng-repeat="friend in friends | orderBy:'-login':true | orderBy:'-online' track by friend.id"><user-avatar uuid="{{friend.id}}"></user-avatar>
+  <div class="login">{{friend.login}}</div>
+  
+  <div ng-if="friend.online == true" class="online-status">
+  	  <i class="tiny material-icons online">lens</i> online</div>
+  </div>
+  <div ng-if="friend.online == false" class="online-status">
+  	  <i class="tiny material-icons offline">lens</i> offline</div>
+  </div>
+
   </li>
 </ul> 
