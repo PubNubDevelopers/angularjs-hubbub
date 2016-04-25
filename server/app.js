@@ -281,8 +281,8 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
     return _.join([
                     'friends_presence_'+ user._id ,
                     'friends_presence_'+ user._id + '-pnpres',
-                    'conversation_direct_'+ user._id ,
-                    'conversation_direct_'+ user._id + '-pnpres'
+                    'conversations_'+ user._id ,
+                    'conversations_'+ user._id + '-pnpres'
                   ],',')
   };
 
