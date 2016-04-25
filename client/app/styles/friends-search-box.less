@@ -1,0 +1,40 @@
+@import "theme.less";
+
+.search-box{
+  margin: 10px;
+  background-color: @base-color-dark;
+}
+
+input.search-friend{
+    background-color: @base-color-dark;
+    display: block;
+    font-size: 16px;
+    font-weight: 300;
+    width: auto;
+    height: 45px;
+    margin: 0;
+    padding: 0 45px 0 15px;
+    border: 0;
+    color: white;
+}
+
+input.search-friend[type=text]focus:not([readonly]){
+  border:none;
+  box-shadow: none;
+}
+
+input.search-friend.ng-valid.ng-touched.ng-empty.ng-dirty,ng-valid-parse{
+  border:none;
+  border-shadow: none;
+}
+
+input.search-friend[type=text]:focus:not([readonly]){
+  border: none;
+}
+
+i.search-icon {
+    position: absolute;
+    top: 5px;
+    right: 15px;
+    color: white;
+}
