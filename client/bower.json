@@ -9,7 +9,7 @@
     "pubnub-angular": "^3.2.1",
     "jquery": "^2.2.0",
     "lodash": "^4.0.1",
-    "ng-notify": "^0.7.2",
+    "ng-notify": "^0.8.0",
     "satellizer": "^0.14.0",
     "particles.js": "^2.0.0"
   },
