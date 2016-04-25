@@ -1,6 +1,6 @@
 angular.module('app')
-.factory('AuthenticationService', ['Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory', '$http', 'config', '$location',
- function AuthenticationService(Pubnub, ngNotify, $auth, currentUser, $cacheFactory, $http, config, $location) {
+.factory('AuthenticationService', ['$rootScope','Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory', '$http', 'config', '$location',
+ function AuthenticationService($rootScope,Pubnub, ngNotify, $auth, currentUser, $cacheFactory, $http, config, $location) {
   
 	var whenDisconnected = function(){
 	  ngNotify.set('Connection lost. Trying to reconnect...', {
@@ -33,9 +33,6 @@ angular.module('app')
 		}
 	};
 
-	var channel = "messages";
-
-
 	var serverSignout = function(){
 		 
 		 var url = config.SERVER_URL + 'logout'
@@ -47,9 +44,21 @@ angular.module('app')
 	var clientSignout = function(){
 
 		$auth.logout()
-		Pubnub.unsubscribe({ channel: channel });
-  	$cacheFactory.get('$http').removeAll();
 
+		//---------------------------------------------------------
+  	var channels = [	
+									'messages', 
+									currentUser.get().id.toString() + '_presence'
+							 ]
+
+		var channel_groups = [ 
+    												currentUser.get().id.toString() + '_friends_presence'													
+    										 ]
+
+		Pubnub.unsubscribe({ channel: channels });
+		Pubnub.unsubscribe({ channel_group: channel_groups });
+
+  	$cacheFactory.get('$http').removeAll();
 
 	};
 
@@ -60,12 +69,18 @@ angular.module('app')
   	ngNotify.dismiss();
 
   	return currentUser.fetch().then(function(){
-  			
+
   		Pubnub.set_uuid(currentUser.get().id) 
     	Pubnub.auth($auth.getToken())
 
+    	var channels = [	
+    									  'messages', 
+    									  // Automatically publish presence events on the own user presence channel
+    										currentUser.get().id.toString() + '_presence'  
+    								 ]
+
 	    Pubnub.subscribe({
-	          channel: channel,
+	          channel: channels,
 	          disconnect : whenDisconnected, 
 	          reconnect : whenReconnected,
 	          error: whenError,
@@ -73,12 +88,22 @@ angular.module('app')
 	          triggerEvents: true
 	    });
 
+	    var channel_groups = [ 
+    						    currentUser.get().id.toString() + '_friends_presence-pnpres'													
+    						 ]
+
+	    Pubnub.subscribe({
+	          channel_group: channel_groups,
+	          noheresync: true,
+	          triggerEvents: ['callback']
+	    });    	
+
 	  });
   };
 
   var logout = function(){
 
-  		return serverSignout().then(function(){
+  		return serverSignout().finally(function(){
 
   			clientSignout();
 

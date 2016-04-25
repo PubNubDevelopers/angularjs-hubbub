@@ -1,0 +1,14 @@
+<ul class="friend-list collection">
+
+  <li class="collection-item avatar" ng-repeat="friend in friends | orderBy:'-login':true | orderBy:'-online' | filter:search:strict track by friend.id "><user-avatar uuid="{{friend.id}}"></user-avatar>
+  <div class="login">{{friend.login}}</div>
+  
+  <div ng-if="friend.online == true" class="online-status">
+  	  <i class="tiny material-icons online">lens</i> online</div>
+  </div>
+  <div ng-if="friend.online == false" class="online-status">
+  	  <i class="tiny material-icons offline">lens</i> offline</div>
+  </div>
+
+  </li>
+</ul> 

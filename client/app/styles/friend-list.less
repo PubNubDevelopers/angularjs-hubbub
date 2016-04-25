@@ -1,0 +1,39 @@
+@import "theme.less";
+
+.friend-list{
+  flex:1;
+  overflow: auto;
+  margin-top:0;
+  margin-bottom:0;
+  border-radius: 0px;
+  border:none;
+}
+
+
+.friend-list .collection-item.avatar {
+    min-height: 64px;
+}
+
+.friend-list .collection-item {
+
+	background-color: transparent;
+	border: none;
+	color: white;
+}
+
+.online-status{
+	color: darken(white, 20%);
+    font-size: 13px;
+}
+
+.online-status i.tiny{
+	font-size: 0.7rem;
+}
+
+.online-status .online{
+    color: #4caf50;
+}
+
+.online-status .offline{
+    color: #e53935;
+}

@@ -13,6 +13,7 @@ var github = require('octonode');
 var _ = require('lodash');
 var dotenv = require('dotenv').config()
 var pubnub = require('pubnub');
+var Q = require('q');
 
 var app = express();
 
@@ -39,14 +40,29 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
  | Setting up PubNub
  |--------------------------------------------------------------------------
 */
-  
+ 
+  console.log('------------ Initing PubNub ----------------')
   pubnub = pubnub.init({
     subscribe_key: process.env.PUBNUB_SUBSCRIBE_KEY,
     publish_key: process.env.PUBNUB_PUBLISH_KEY,
     secret_key: process.env.PUBNUB_SECRET_KEY,
-    auth_key: 'NodeJS-Server',
-    ssl: true
+    auth_key: process.env.SERVER_PUBNUB_AUTH_KEY,
+    ssl: true,
+    error: function(err){ console.log(err) }
   });
+
+  // Grant to the SERVER_AUTH_KEY the manage permission in order to beeing able to add/remove channels to any channel group.
+  console.log('------------ Granting channel group manage permission to the server ----------------')
+  pubnub.grant({
+                  channel_group: ':',  // The wildcard ':' will grant access to any channel group
+                  auth_key: process.env.SERVER_PUBNUB_AUTH_KEY, 
+                  manage: true, 
+                  read: true,
+                  write: true,
+                  ttl: 0,
+                  callback: function(res){ console.log(res) },
+                  error: function(err){ console.log(err) }
+               });
 
 
 /*
@@ -72,9 +88,8 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       // Authorized
       else{
 
-         req.token = token;
-         req.user_id = users[0].user_id
-
+         // Adding user information to the request
+         req.user = users[0]
          next();
       }
     });
@@ -112,14 +127,15 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
             }
 
             var github_id = profile['id'];
+            var user = { _id: github_id, oauth_token: access_token }
 
             db.users.find({ _id: github_id  }, function (err, docs) {
+
 
               // The user doesn't have an account already
               if(_.isEmpty(docs)){
 
                 // Create the user
-                var user = { _id: github_id, oauth_token: access_token }
                 db.users.insert(user);
 
               }
@@ -129,19 +145,64 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
                 db.users.update({ _id: github_id }, { $set: { oauth_token: access_token } } )
               }
 
-
             });
+
+           grantAccess(user).then(function(){
+              res.send({token: access_token});
+           }).catch(function(){
+              res.status(500).send();
+           })
+
          });
-
-
-         var error = function(){ res.status(500).send(); } 
-         var success = function(){ res.send({token: access_token}); }
-
-         grantAccess(access_token, error, success);
 
     });
   });
   
+  /*
+ |--------------------------------------------------------------------------
+ | GET /api/friends
+ |--------------------------------------------------------------------------
+*/
+
+  app.get('/api/friends', ensureAuthenticated, function(req, res) {
+
+    var github_client = github.client(req.user.oauth_token);
+    github_client.requestDefaults['qs'] = {page:1, per_page: 100};
+    var ghme = github_client.me()
+
+    ghme.followers(function(err, followers){
+
+        if (!err && res.statusCode == 200){
+
+          ghme.following(function(err, following){
+
+              if (!err && res.statusCode == 200){  
+
+                var friends = _.unionWith(followers,following, function(friend1,friend2){
+                    return friend1.id == friend2.id
+                });
+
+                createOwnUserFriendsPresenceChannelGroup(req.user, friends).then(function(){
+                   res.status(200).send(friends);
+                }).catch(function(){
+                   res.status(500).send();
+                })
+
+              }
+              else{
+                res.status(500).send();
+              }
+          }); 
+
+        }
+        else{
+          res.status(500).send();
+        }
+
+    }); 
+
+  });
+
 
   /*
  |--------------------------------------------------------------------------
@@ -154,7 +215,7 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
     // Revoke access to the Access token
     // https://developer.github.com/v3/oauth_authorizations/#reset-an-authorization
     // POST /applications/:client_id/tokens/:access_token
-    var resetTokenUrl = "https://api.github.com/applications/"+process.env.GITHUB_CLIENT_ID+'/tokens/'+ req.token;
+    var resetTokenUrl = "https://api.github.com/applications/"+process.env.GITHUB_CLIENT_ID+'/tokens/'+ req.user.oauth_token;
     var authorization = new Buffer(process.env.GITHUB_CLIENT_ID + ":" + process.env.GITHUB_CLIENT_SECRET).toString("base64");
 
     var headers = { 
@@ -166,12 +227,12 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
     request.post({ url: resetTokenUrl, headers: headers }, function(err, response, payload) {
       if (!err && response.statusCode == 200){
 
-            var revokeError = function(){ res.status(500).send(); } 
-            var revokeSuccess = function(){ 
-              db.users.update({ oauth_token: req.token }, { $set: { oauth_token: null } } )
+             revokeAccess(req.user).then(function(){
+              db.users.update({ oauth_token: req.user.oauth_token }, { $set: { oauth_token: null } } )
               res.status(200).send(); 
-            } 
-            revokeAccess(req.token, revokeError, revokeSuccess);    
+             }).catch(function(){
+                res.status(500).send();
+             })
       }
       else{
           res.status(500).send();
@@ -186,10 +247,34 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
  |--------------------------------------------------------------------------
 */
 
-  var getProtectedChannelList = function(){
-    return ['messages', 'messages-pnpres'];
+  var getProtectedChannelList = function(user){
+    return {
+      'readOnly': [],
+      'writeOnly': [],
+      'readAndWrite': [
+                        'messages',
+                        'messages-pnpres',
+                         user._id+'_presence',
+                         user._id+'_presence-pnpres',
+                      ]
+    }
   };
 
+
+/*
+ |--------------------------------------------------------------------------
+ | Get the list of protected channel groups
+ |--------------------------------------------------------------------------
+*/
+
+  // There is no concept of write access with channel groups. 
+  // You can only subscribe or manage a channel group
+  var getProtectedChannelGroupList = function(user){
+    return _.join([
+                    user._id+'_friends_presence',
+                    user._id+'_friends_presence-pnpres' 
+                  ],',')
+  };
 
 /*
  |--------------------------------------------------------------------------
@@ -197,17 +282,31 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
  |--------------------------------------------------------------------------
 */
 
-  var grantAccess = function(oauth_token, error, success){
 
-      pubnub.grant({ 
-        channel: getProtectedChannelList(), 
-        auth_key: oauth_token, 
-        read: true, 
-        write: true,
-        ttl: 0,
-        callback: success,
-        error: error
-      });
+  var grantAccess = function(user){
+
+      var grant = function(args){
+
+        var deferred = Q.defer();
+        args['callback'] = function(res){ deferred.resolve(res); }
+        args['error'] = function(res){ deferred.reject(res); }
+        pubnub.grant(args);
+        return deferred.promise;
+
+      }
+
+      return grant({
+              channel: getProtectedChannelList(user)['readAndWrite'], 
+              auth_key: user.oauth_token, 
+              read: true, 
+              write: true,
+              ttl: 0
+            }).then(grant({
+              channel_group: getProtectedChannelGroupList(user), 
+              auth_key: user.oauth_token, 
+              read: true, 
+              ttl: 0
+            }));
   };
 
 
@@ -217,16 +316,58 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
  |--------------------------------------------------------------------------
 */
 
-  var revokeAccess = function(oauth_token, error, success){
+  var revokeAccess = function(user){
 
-      pubnub.revoke({ 
-        channel: getProtectedChannelList(), 
-        auth_key: oauth_token, 
-        callback: success,
-        error: error
-      });
+      var revoke = function(args){
+
+        var deferred = Q.defer();
+        args['callback'] = function(res){ deferred.resolve(res); }
+        args['error'] = function(res){ deferred.reject(res); }
+        pubnub.revoke(args);
+        return deferred.promise;
+
+      }
+
+      return revoke({ 
+
+          channel: getProtectedChannelList(user)['readAndWrite'], 
+          auth_key: user.oauth_token
+        
+        }).then(revoke({
+              
+              channel_group: getProtectedChannelGroupList(user), 
+              auth_key: user.oauth_token, 
+        }));
   };
 
+
+  /*
+   |--------------------------------------------------------------------------
+   | Create the own user friends channel group
+   |--------------------------------------------------------------------------
+  */
+
+  // All the friends are automatically publishing their presence status to their own presence channel called userID_presence
+  // We aggregate their presence events in the own user channel group called userID_friends_presence
+  // The user subscribe to this channel group to to see his friends online/offline status be updated in realtime. 
+  
+  var createOwnUserFriendsPresenceChannelGroup = function(user, friends){
+
+      var deferred = Q.defer();
+        
+      var friends_presence_channels = _.map(friends, function(friend){ return friend.id+"_presence" });
+      var user_friends_presence_channel = user._id+'_friends_presence'
+
+      pubnub.channel_group_add_channel({
+        callback: function(res){ deferred.resolve(res) },
+        error: function(res){ deferred.reject(res) },
+        channel_group: user_friends_presence_channel,
+        channel: friends_presence_channels
+      }); 
+
+      return deferred.promise;
+
+  }
 
 /*
  |--------------------------------------------------------------------------
