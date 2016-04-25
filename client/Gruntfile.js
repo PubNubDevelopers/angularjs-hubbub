@@ -484,6 +484,7 @@ module.exports = function (grunt) {
 
   grunt.registerTask('build', [
     'less',
+    'ngconstant:build',
     'clean:dist',
     'wiredep',
     'useminPrepare',
@@ -498,8 +499,7 @@ module.exports = function (grunt) {
     'uglify',
     'filerev',
     'usemin',
-    'htmlmin',
-    'ngconstant:build'
+    'htmlmin'
   ]);
 
   grunt.registerTask('default', [
