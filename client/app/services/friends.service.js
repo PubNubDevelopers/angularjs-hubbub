@@ -5,7 +5,7 @@ angular.module('app')
   // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
   this.friends = []
-  this.channel_group = currentUser.get().id.toString() + '_friends_presence';
+  this.channel_group = 'friends_presence_' + currentUser.get().id.toString() 
 
 /*
  |--------------------------------------------------------------------------

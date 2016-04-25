@@ -43,22 +43,17 @@ angular.module('app')
 
 	var clientSignout = function(){
 
-		$auth.logout()
-
-		//---------------------------------------------------------
-  	var channels = [	
-									'messages', 
-									currentUser.get().id.toString() + '_presence'
-							 ]
+  		var channels = [	
+								'messages', 
+								'user_presence_' + currentUser.get().id.toString()
+						]
 
 		var channel_groups = [ 
-    												currentUser.get().id.toString() + '_friends_presence'													
-    										 ]
+    								'friends_presence_' + currentUser.get().id.toString() +'-pnpres'												
+    						 ]
 
 		Pubnub.unsubscribe({ channel: channels });
 		Pubnub.unsubscribe({ channel_group: channel_groups });
-
-  	$cacheFactory.get('$http').removeAll();
 
 	};
 
@@ -74,10 +69,10 @@ angular.module('app')
     	Pubnub.auth($auth.getToken())
 
     	var channels = [	
-    									  'messages', 
-    									  // Automatically publish presence events on the own user presence channel
-    										currentUser.get().id.toString() + '_presence'  
-    								 ]
+								  'messages', 
+								  // Automatically publish presence events on the own user presence channel
+								  'user_presence_' + currentUser.get().id.toString()  
+    					]
 
 	    Pubnub.subscribe({
 	          channel: channels,
@@ -89,7 +84,7 @@ angular.module('app')
 	    });
 
 	    var channel_groups = [ 
-    						    currentUser.get().id.toString() + '_friends_presence-pnpres'													
+    						    'friends_presence_' + currentUser.get().id.toString() +'-pnpres'													
     						 ]
 
 	    Pubnub.subscribe({
@@ -103,9 +98,12 @@ angular.module('app')
 
   var logout = function(){
 
+  		clientSignout();
+
   		return serverSignout().finally(function(){
 
-  			clientSignout();
+  			$auth.logout()
+  			$cacheFactory.get('$http').removeAll();
 
   		});			
 
