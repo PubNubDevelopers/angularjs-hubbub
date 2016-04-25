@@ -182,11 +182,19 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
                     return friend1.id == friend2.id
                 });
 
-                createOwnUserFriendsPresenceChannelGroup(req.user, friends).then(function(){
-                   res.status(200).send(friends);
-                }).catch(function(){
-                   res.status(500).send();
+                // We merge to the friends objects the name of the channel used for the direct conversation
+                var friends = _.map(friends, function(friend){
+                  return _.merge(friend, { direct_conversation_channel: getDirectConversationChannelName(friend.id, req.user._id) })    
                 })
+                
+                Q.all([
+                        createOwnUserConversationsPresenceChannelGroup(req.user, friends),
+                        createOwnUserFriendsPresenceChannelGroup(req.user, friends)
+                      ]).then(function(){
+                          res.status(200).send(friends);
+                      }).catch(function(){
+                           res.status(500).send();
+                      })
 
               }
               else{
@@ -368,6 +376,61 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       return deferred.promise;
 
   }
+
+  /*
+   |--------------------------------------------------------------------------
+   | Create the own user conversations channel group
+   |--------------------------------------------------------------------------
+  */
+
+  // All the friends are automatically publishing their presence status to their own presence channel called userID_presence
+  // We aggregate their presence events in the own user channel group called userID_friends_presence
+  // The user subscribe to this channel group to to see his friends online/offline status be updated in realtime. 
+  
+  var createOwnUserConversationsPresenceChannelGroup = function(user, friends){
+
+      var deferred = Q.defer();
+      
+      // The list of channels used for the 1-1 conversations
+      var direct_conversation_channels = _.map(friends, function(friend){
+        return getDirectConversationChannelName(user._id, friend.id) 
+      });
+
+      // The name of the channel used by the user to group all the conversations
+      var user_conversation_channel_group = 'conversations_' + user._id;
+
+      pubnub.channel_group_add_channel({
+        callback: function(res){ deferred.resolve(res) },
+        error: function(res){ deferred.reject(res) },
+        channel_group: user_conversation_channel_group,
+        channel: direct_conversation_channels
+      }); 
+
+      return deferred.promise;
+
+  }
+
+
+  /*
+   |--------------------------------------------------------------------------
+   | Get the name of the direct conversation between two user
+   |--------------------------------------------------------------------------
+  */
+
+  // This function return the name of the channel used for a 1-1 chat between two people
+  // The pattern is : conversation_direct_userID1_userID2
+  // With user userID1 alphabetically lower than userID2
+  
+  var getDirectConversationChannelName = function(userID1, userID2){
+
+    var order = userID1.toString() < userID2.toString();
+    var usersCombined = order ? userID1 +'_' + userID2 : userID2 + '_' + userID1
+
+    return "conversation_direct_" + usersCombined;
+
+  }
+
+
 
 /*
  |--------------------------------------------------------------------------
