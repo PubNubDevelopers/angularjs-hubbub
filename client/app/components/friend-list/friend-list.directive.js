@@ -3,7 +3,7 @@ angular.module('app').directive('friendList', function() {
     restrict: "E",
     replace: true,
     templateUrl: 'components/friend-list/friend-list.html',
-    scope: {}, 
+    scope: false, 
 
     controller: function($scope, Friends){
 
