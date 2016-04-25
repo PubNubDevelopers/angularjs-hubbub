@@ -18,7 +18,7 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
       var fetchPreviousMessages = function(){
 
-        ngNotify.set('Loading previous messages...','success');
+        //ngNotify.set('Loading previous messages...','success');
 
         var currentMessage = MessageService.getMessages()[0].uuid;
 
@@ -36,7 +36,11 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
         if(hasScrollReachedTop()){
 
           if(MessageService.messagesAllFetched()){
-            ngNotify.set('All the messages have been loaded', 'grimace');
+            ngNotify.set('All the messages have been loaded', {
+              type: 'messages-all-fetched',
+              target: '.message-list',
+              duration: 2000
+            })
           }
           else {
             fetchPreviousMessages();

@@ -19,6 +19,9 @@ angular.module('app')
           duration: 250
       });
 
+      ngNotify.addType('messages-all-fetched', 'ngn-messages-all-fetched');
+      ngNotify.addType('fetching-messages', 'ngn-fetching-messages');
+
   }])
   .config(['$authProvider','config', function($authProvider, config) {
 
