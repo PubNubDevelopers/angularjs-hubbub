@@ -254,8 +254,8 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       'readAndWrite': [
                         'messages',
                         'messages-pnpres',
-                         user._id+'_presence',
-                         user._id+'_presence-pnpres',
+                        'user_presence_' + user._id ,
+                        'user_presence_' + user._id + '-pnpres',
                       ]
     }
   };
@@ -271,8 +271,8 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
   // You can only subscribe or manage a channel group
   var getProtectedChannelGroupList = function(user){
     return _.join([
-                    user._id+'_friends_presence',
-                    user._id+'_friends_presence-pnpres' 
+                    'friends_presence_'+ user._id ,
+                    'friends_presence_'+ user._id + '-pnpres' 
                   ],',')
   };
 
@@ -355,8 +355,8 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
 
       var deferred = Q.defer();
         
-      var friends_presence_channels = _.map(friends, function(friend){ return friend.id+"_presence" });
-      var user_friends_presence_channel = user._id+'_friends_presence'
+      var friends_presence_channels = _.map(friends, function(friend){ return "user_presence_" + friend.id });
+      var user_friends_presence_channel = 'friends_presence_' + user._id
 
       pubnub.channel_group_add_channel({
         callback: function(res){ deferred.resolve(res) },
