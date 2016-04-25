@@ -1,5 +1,6 @@
 <ul class="friend-list collection">
-  <li class="collection-item avatar" ng-repeat="friend in friends | orderBy:'-login':true | orderBy:'-online' track by friend.id"><user-avatar uuid="{{friend.id}}"></user-avatar>
+
+  <li class="collection-item avatar" ng-repeat="friend in friends | orderBy:'-login':true | orderBy:'-online' | filter:search:strict track by friend.id "><user-avatar uuid="{{friend.id}}"></user-avatar>
   <div class="login">{{friend.login}}</div>
   
   <div ng-if="friend.online == true" class="online-status">
