@@ -49,7 +49,8 @@ angular.module('app')
 						]
 
 		var channel_groups = [ 
-    								'friends_presence_' + currentUser.get().id.toString() +'-pnpres'												
+    								'friends_presence_' + currentUser.get().id.toString() +'-pnpres',
+    								'conversations_' + currentUser.get().id.toString()												
     						 ]
 
 		Pubnub.unsubscribe({ channel: channels });
@@ -84,7 +85,8 @@ angular.module('app')
 	    });
 
 	    var channel_groups = [ 
-    						    'friends_presence_' + currentUser.get().id.toString() +'-pnpres'													
+    						    'friends_presence_' + currentUser.get().id.toString() +'-pnpres',
+    						    'conversations_' + currentUser.get().id.toString()														
     						 ]
 
 	    Pubnub.subscribe({
