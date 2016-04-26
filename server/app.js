@@ -189,7 +189,8 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
                 
                 Q.all([
                         createOwnUserConversationsPresenceChannelGroup(req.user, friends),
-                        createOwnUserFriendsPresenceChannelGroup(req.user, friends)
+                        createOwnUserFriendsPresenceChannelGroup(req.user, friends),
+                        allowUserToPublishToConversationChannels(req.user, friends)
                       ]).then(function(){
                           res.status(200).send(friends);
                       }).catch(function(){
@@ -286,6 +287,25 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
                   ],',')
   };
 
+
+
+/*
+ |--------------------------------------------------------------------------
+ | Grant access to a channel or a channel group
+ | - return a promise
+ |--------------------------------------------------------------------------
+*/
+
+  var grant = function(args){
+
+    var deferred = Q.defer();
+    args['callback'] = function(res){ deferred.resolve(res); }
+    args['error'] = function(res){ deferred.reject(res); }
+    pubnub.grant(args);
+    return deferred.promise;
+
+  }
+
 /*
  |--------------------------------------------------------------------------
  | Grant access to an oauth token
@@ -294,16 +314,6 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
 
 
   var grantAccess = function(user){
-
-      var grant = function(args){
-
-        var deferred = Q.defer();
-        args['callback'] = function(res){ deferred.resolve(res); }
-        args['error'] = function(res){ deferred.reject(res); }
-        pubnub.grant(args);
-        return deferred.promise;
-
-      }
 
       return grant({
               channel: getProtectedChannelList(user)['readAndWrite'], 
@@ -410,6 +420,43 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
 
       return deferred.promise;
 
+  }
+
+
+    /*
+   |--------------------------------------------------------------------------
+   | Allow the user to publish to his conversations channels
+   |--------------------------------------------------------------------------
+  */
+
+   // This method allow the user to publish to its conversation channels 
+   // By granting the access to all the channels
+
+   var allowUserToPublishToConversationChannels = function(user, friends){
+
+      return grant({
+              channel: getDirectConversationChannelList(user, friends), 
+              auth_key: user.oauth_token, 
+              read: true, 
+              write: true,
+              ttl: 0
+            });
+
+   }; 
+
+
+
+  /*
+   |--------------------------------------------------------------------------
+   | Get the list of the direct conversations channels of the user based on his friends
+   |--------------------------------------------------------------------------
+  */
+
+  var getDirectConversationChannelList = function(user, friends){
+
+      return _.map(friends, function(friend){
+         return getDirectConversationChannelName(user._id, friend.id);
+     }) 
   }
 
 
