@@ -1,4 +1,4 @@
 'use strict';
 
 angular
-  .module('app', [ 'ngRoute', 'pubnub.angular.service', 'ngNotify', 'satellizer'])
+  .module('app', ['pubnub.angular.service', 'ngNotify', 'satellizer', 'ngSanitize', 'ngToast', 'ui.router', 'angular-loading-bar'])

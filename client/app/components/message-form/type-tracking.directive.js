@@ -1,4 +1,4 @@
-angular.module('app').directive('typeTracking', function(TypingIndicatorService, $timeout) {
+angular.module('app').directive('typeTracking', function(TypingIndicator, $timeout) {
   return {
 
     restrict: 'A',
@@ -9,18 +9,18 @@ angular.module('app').directive('typeTracking', function(TypingIndicatorService,
 
         // When to start Typing ?
         // Content is not empty and was not typing before
-        if( !_.isEmpty(input) && !TypingIndicatorService.isCurrentUserTyping() ){
-          TypingIndicatorService.startTyping();
+        if( !_.isEmpty(input) && !TypingIndicator.isCurrentUserTyping() ){
+          TypingIndicator.startTyping();
           scope.stopTypingScheduler();
         }
         // When to reschedule ?
         // when the input is not empty and you are typing
-        else if ( !_.isEmpty(input) && TypingIndicatorService.isCurrentUserTyping() ){
+        else if ( !_.isEmpty(input) && TypingIndicator.isCurrentUserTyping() ){
           scope.stopTypingScheduler();
         }
         // When to stop typing ?
         // You erase the input : You were typing and the input is now empty
-        else if ( TypingIndicatorService.isCurrentUserTyping() && _.isEmpty(input) ){
+        else if ( TypingIndicator.isCurrentUserTyping() && _.isEmpty(input) ){
           // Stop typing immediatly
           scope.stopTypingScheduler.flush();
         }
@@ -33,7 +33,7 @@ angular.module('app').directive('typeTracking', function(TypingIndicatorService,
       $scope.stopTypingTime = 5000
       
       // Scheduler that trigger stopTyping if the function has not been invoced after stopTypingTime
-      $scope.stopTypingScheduler = _.debounce(TypingIndicatorService.stopTyping, $scope.stopTypingTime)
+      $scope.stopTypingScheduler = _.debounce(TypingIndicator.stopTyping, $scope.stopTypingTime)
 
     }
   };

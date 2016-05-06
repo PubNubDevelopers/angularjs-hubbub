@@ -10,6 +10,9 @@
     <!-- bower:css -->
     <link rel="stylesheet" href="bower_components/Materialize/bin/materialize.css" />
     <link rel="stylesheet" href="bower_components/ng-notify/src/styles/ng-notify.css" />
+    <link rel="stylesheet" href="bower_components/ngToast/dist/ngToast.css" />
+    <link rel='stylesheet' href='bower_components/angular-loading-bar/build/loading-bar.min.css' type='text/css' media='all' />
+
     <!-- endbower -->
     <!-- endbuild -->
     <!-- build:css(.tmp) styles/chat.css -->
@@ -20,14 +23,13 @@
   </head>
   <body ng-app="app">
 
-  
-    <ng-view></ng-view>
+    <div id="main-view" ui-view></div>
+     <!-- <ui-view></ui-view> -->
 
     <!-- build:js(.) scripts/vendor.js -->
     <!-- bower:js -->
     <script src="bower_components/jquery/dist/jquery.js"></script>
     <script src="bower_components/angular/angular.js"></script>
-    <script src="bower_components/angular-route/angular-route.js"></script>
     <script src="bower_components/Materialize/bin/materialize.js"></script>
     <script src="bower_components/pubnub/web/dist/pubnub.min.js"></script>
     <script src="bower_components/pubnub-angular/dist/pubnub-angular-3.2.0.min.js"></script>
@@ -35,6 +37,10 @@
     <script src="bower_components/ng-notify/src/scripts/ng-notify.js"></script>
     <script src="bower_components/satellizer/satellizer.js"></script>
     <script src="bower_components/particles.js/particles.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/ngToast/dist/ngToast.js"></script>
+    <script src="bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+    <script src='bower_components/angular-loading-bar/build/loading-bar.min.js'></script>
     <!-- endbower -->
     <!-- endbuild -->
 
@@ -46,8 +52,9 @@
             
         <script src="services/authentication.service.js"></script>
         <script src="services/current_user.service.js"></script>
+        <script src="services/conversations.service.js"></script>
+
         <script src="services/friends.service.js"></script>
-        <script src="services/message-factory.js"></script>
         <script src="services/online_users.service.js"></script>
         <script src="services/typing-indicator.service.js"></script>
         
@@ -55,8 +62,11 @@
         <script src="shared/repeat-complete.directive.js"></script>
 
         <script src="components/login/sign-in-with-github-button.directive.js"></script>
+        <script src="components/conversation/conversation.directive.js"></script>
+        <script src="components/conversation/conversation_name.directive.js"></script>
         <script src="components/message-form/message-form.directive.js"></script>
         <script src="components/message-form/type-tracking.directive.js"></script>
+        <script src="components/channels/channels.directive.js"></script>
         <script src="components/message-list/message-list.directive.js"></script>
         <script src="components/message-item/message-item.directive.js"></script>
         <script src="components/online-user-list/online-user-list.directive.js"></script>
@@ -65,6 +75,7 @@
         <script src="components/friends-search-box/friends-search-box.directive.js"></script>
         <script src="components/user-menu/user-menu.directive.js"></script>
 
+        <script src="views/chat.controller.js"></script>
         
 
         <!-- endbuild -->
