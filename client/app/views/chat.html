@@ -1,14 +1,12 @@
 <div class="chat">
   <section class="chat-sidebar">
     <user-menu></user-menu>
+    <channels></channels>
     <friends-search-box></friends-search-box>
     <friend-list></friend-list>
   </section>
 
-  <section class="chat-main">
-    <online-user-list></online-user-list>
-    <message-list></message-list>
-    <typing-indicator-box></typing-indicator-box>
-    <message-form></message-form>
+  <section class="chat-main" ui-view>
   </section>
+  
 </div>

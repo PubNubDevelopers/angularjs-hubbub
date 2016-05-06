@@ -44,7 +44,7 @@ angular.module('app')
 	var clientSignout = function(){
 
   		var channels = [	
-								'messages', 
+								'conversation_channel_general', 
 								'user_presence_' + currentUser.get().id.toString()
 						]
 
@@ -62,7 +62,8 @@ angular.module('app')
 
   var login = function(){
 
-  	ngNotify.dismiss();
+  	// Disable for now
+  	//ngNotify.dismiss();
 
   	return currentUser.fetch().then(function(){
 
@@ -70,7 +71,7 @@ angular.module('app')
     	Pubnub.auth($auth.getToken())
 
     	var channels = [	
-								  'messages', 
+								  'conversation_channel_general', 
 								  // Automatically publish presence events on the own user presence channel
 								  'user_presence_' + currentUser.get().id.toString()  
     					]
@@ -85,15 +86,16 @@ angular.module('app')
 	    });
 
 	    var channel_groups = [ 
-    						    'friends_presence_' + currentUser.get().id.toString() +'-pnpres',
-    						    'conversations_' + currentUser.get().id.toString()														
+    						    'friends_presence_' + currentUser.get().id.toString() +'-pnpres'														
     						 ]
 
 	    Pubnub.subscribe({
 	          channel_group: channel_groups,
 	          noheresync: true,
 	          triggerEvents: ['callback']
+
 	    });    	
+	    return true;
 
 	  });
   };

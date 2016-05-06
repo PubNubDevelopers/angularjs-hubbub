@@ -1,12 +1,12 @@
 angular.module('app')
-.factory('TypingIndicatorService', ['$rootScope', 'Pubnub','currentUser', '$filter',
- function TypingIndicatorServiceFactory($rootScope, Pubnub, currentUser, $filter) {
+.factory('TypingIndicator', ['$rootScope', 'Pubnub','currentUser', '$filter',
+ function TypingIndicator($rootScope, Pubnub, currentUser, $filter) {
   
   // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
   // List of uuids that are typing
   this.usersTyping = []
-  this.channel = 'messages';
+  this.channel = 'conversation_channel_general';
   
   // Typing indicator of the current user
   this.isCurrentUserTyping = false ;
