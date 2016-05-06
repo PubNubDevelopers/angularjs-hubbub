@@ -1,4 +1,4 @@
-angular.module('app').directive('friendList', function() {
+angular.module('app').directive('friendList', function($rootScope, Pubnub, currentUser) {
   return {
     restrict: "E",
     replace: true,
@@ -8,7 +8,9 @@ angular.module('app').directive('friendList', function() {
     controller: function($scope, Friends){
 
       Friends.all().then(function(friends) {
+        
         $scope.friends = friends;
+      
       });
 
     }

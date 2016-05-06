@@ -1,6 +1,6 @@
 angular.module('app')
 .factory('Friends', ['$rootScope', 'Pubnub','currentUser', '$http', '$q', 'config',
- function FriendsFactory($rootScope, Pubnub, currentUser, $http, $q, config) {
+ function FriendsService($rootScope, Pubnub, currentUser, $http, $q, config) {
   
   // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
@@ -14,7 +14,7 @@ angular.module('app')
 */
 
   var fetchFriends = function(){
-    return $http({method: 'GET', url: config.SERVER_URL+"api/friends"})
+    return $http({method: 'GET',  url: config.SERVER_URL+"api/friends"})
   }
 
 /*
@@ -124,6 +124,15 @@ var mergeOnlineStatusToFriendList = function(friends, onlineFriends){
 
   var all = function(){
 
+    // We return the the array reference if already populated
+
+    if (!(_.isEmpty(self.friends))){
+      var deferred = $q.defer()
+      deferred.resolve(self.friends);
+      return deferred.promise;
+
+    }
+
     return $q.all([fetchFriends(), fetchOnlineFriends()]).then(function(data){
 
       var friends = data[0].data;
@@ -144,6 +153,19 @@ var mergeOnlineStatusToFriendList = function(friends, onlineFriends){
 
   }
 
+
+/*
+|--------------------------------------------------------------------------
+| Find and return a friend based on a object {key: value}
+|--------------------------------------------------------------------------
+*/
+
+var find = function(findObject){
+
+  return _.find(self.friends, findObject);
+
+}
+
 /*
  |--------------------------------------------------------------------------
  | Public API
@@ -151,7 +173,8 @@ var mergeOnlineStatusToFriendList = function(friends, onlineFriends){
 */
 
   return { 
-    all: all
+    all: all,
+    find: find
   } 
 
 }]);
