@@ -2,7 +2,7 @@
 
 This is a full AngularJS chat app built with PubNub
 
-![AngularJS Hubbub Screenshot](http://cl.ly/1p3A0q2m0L0j/Hubbub%20screen%20shot.png)
+![AngularJS Hubbub Screenshot](http://cl.ly/3g0e0w0T1H1k)
 
 ## Features
 
@@ -11,12 +11,12 @@ This is a full AngularJS chat app built with PubNub
 - Realtime user roster
 - OAuth 2.0 authentication flow with Github OAuth
 - Private and secure communication
+- Friends list
+- Direct chat 
 
 ## Roadmap 
 
-- Friends list
 - Sending pictures
-- Direct chat 
 - Group chat
 - AES-256 encryption
 - Digital Signature Message Verification

@@ -24,7 +24,6 @@ module.exports = function(config) {
       // bower:js
       'bower_components/jquery/dist/jquery.js',
       'bower_components/angular/angular.js',
-      'bower_components/angular-route/angular-route.js',
       'bower_components/Materialize/bin/materialize.js',
       'bower_components/pubnub/web/dist/pubnub.min.js',
       'bower_components/pubnub-angular/dist/pubnub-angular.min.js',
@@ -32,6 +31,10 @@ module.exports = function(config) {
       'bower_components/ng-notify/src/scripts/ng-notify.js',
       'bower_components/satellizer/satellizer.js',
       'bower_components/particles.js/particles.js',
+      'bower_components/angular-sanitize/angular-sanitize.js',
+      'bower_components/ngToast/dist/ngToast.js',
+      'bower_components/angular-ui-router/release/angular-ui-router.js',
+      'bower_components/angular-loading-bar/build/loading-bar.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",

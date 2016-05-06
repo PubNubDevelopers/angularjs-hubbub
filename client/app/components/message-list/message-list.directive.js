@@ -1,8 +1,11 @@
-angular.module('app').directive('messageList', function($rootScope, $anchorScroll, $timeout, MessageService, ngNotify) {
+angular.module('app').directive('messageList', function($rootScope, $anchorScroll, $timeout, ngNotify) {
   return {
     restrict: "E",
     replace: true,
     templateUrl: 'components/message-list/message-list.html',
+    scope: {
+      messages: "="
+    },
 
     link: function(scope, element, attrs, ctrl) {
 
@@ -20,9 +23,9 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
         //ngNotify.set('Loading previous messages...','success');
 
-        var currentMessage = MessageService.getMessages()[0].uuid;
+        var currentMessage = scope.messages[0].uuid;
 
-        MessageService.fetchPreviousMessages().then(function(m){
+          scope.messages.$load(20).then(function(){
 
           // Scroll to the previous message 
           $anchorScroll(currentMessage);
@@ -35,7 +38,7 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
         if(hasScrollReachedTop()){
 
-          if(MessageService.messagesAllFetched()){
+          if(scope.messages.$allLoaded()){
             ngNotify.set('All the messages have been loaded', {
               type: 'messages-all-fetched',
               target: '.message-list',
@@ -61,11 +64,12 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
       init();
 
     },
-    controller: function($scope){
-      // Auto scroll down is acticated when first loaded
+    controller: function($scope, $state, Friends, Conversations, $stateParams){
+
+ 
       $scope.autoScrollDown = true;
-        
-      $scope.messages = MessageService.getMessages();
+
+      //$scope.messages.$destroy();
 
       // Hook that is called once the list is completely rendered
       $scope.listDidRender = function(){
