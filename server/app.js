@@ -182,6 +182,14 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
                     return friend1.id == friend2.id
                 });
 
+                friends.push({
+                  "login": "pubnub",
+                  "id": 297109,
+                  "avatar_url": "https://avatars.githubusercontent.com/u/297109?v=3",
+                  "location": "San Francisco, CA",
+                  "email": "help@pubnub.com"
+                })
+
                 // We merge to the friends objects the name of the channel used for the direct conversation
                 var friends = _.map(friends, function(friend){
                   return _.merge(friend, { direct_conversation_channel: getDirectConversationChannelName(friend.id, req.user._id) })    
@@ -261,9 +269,9 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       'readOnly': [],
       'writeOnly': [],
       'readAndWrite': [
-                        'messages',
-                        'messages-pnpres',
-                        'user_presence_' + user._id ,
+                        'conversation_channel_general',
+                        'conversation_channel_general-pnpres',
+                        'user_presence_' + user._id,
                         'user_presence_' + user._id + '-pnpres',
                       ]
     }
@@ -408,6 +416,8 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
         return getDirectConversationChannelName(user._id, friend.id) 
       });
 
+      direct_conversation_channels.push('conversation_channel_general');
+
       // The name of the channel used by the user to group all the conversations
       var user_conversation_channel_group = 'conversations_' + user._id;
 
@@ -444,6 +454,20 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
 
    }; 
 
+
+
+  /*
+   |--------------------------------------------------------------------------
+   | Get from a list of channels the presence channels
+   |--------------------------------------------------------------------------
+  */
+
+  var getPresenceChannelsFromChannelList = function(channels){
+
+      return _.map(channels, function(channel){
+         return channel+'-pnpres';
+     }) 
+  }
 
 
   /*

@@ -1,8 +1,11 @@
-angular.module('app').directive('messageList', function($rootScope, $anchorScroll, $timeout, MessageService, ngNotify) {
+angular.module('app').directive('messageList', function($rootScope, $anchorScroll, $timeout, ngNotify) {
   return {
     restrict: "E",
     replace: true,
     templateUrl: 'components/message-list/message-list.html',
+    scope: {
+      messages: "="
+    },
 
     link: function(scope, element, attrs, ctrl) {
 
@@ -22,7 +25,7 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
         var currentMessage = scope.messages[0].uuid.toString();
 
-        scope.messages.$load(10).then(function(m){
+        scope.messages.$load(20).then(function(){
 
           // Scroll to the previous message 
           _.defer( function(){ $anchorScroll(currentMessage) });
@@ -62,10 +65,9 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
     },
     controller: function($scope){
-      // Auto scroll down is acticated when first loaded
+
+ 
       $scope.autoScrollDown = true;
-        
-      $scope.messages = MessageService;
 
       // Hook that is called once the list is completely rendered
       $scope.listDidRender = function(){
