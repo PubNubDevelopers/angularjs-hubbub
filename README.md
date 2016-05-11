@@ -2,7 +2,9 @@
 
 This is a full AngularJS chat app built with PubNub
 
-![AngularJS Hubbub Screenshot](http://cl.ly/3g0e0w0T1H1k)
+
+![AngularJS Hubbub Screenshot](http://cl.ly/1p3A0q2m0L0j/Hubbub%20screen%20shot.png)
+![AngularJS Hubbub Screenshot](http://f.cl.ly/items/2a0l293o150F2K071U1F/Screen%20Shot%202016-05-11%20at%204.59.16%20AM.png)
 
 ## Features
 
