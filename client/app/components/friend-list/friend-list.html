@@ -1,6 +1,6 @@
 <ul class="friend-list collection">
 
-  <li class="collection-item avatar" ng-repeat="friend in friends | orderBy:'-login':true | orderBy:'-online' | filter:search:strict track by friend.id "><a href="/#/conversations/private/{{friend.login}}"><user-avatar uuid="{{friend.id}}"></user-avatar></a>
+  <li class="collection-item avatar" ng-repeat="friend in friends | orderBy:'-login':true | orderBy:'-online' | filter:search:strict track by friend.id "><a href="#/conversations/private/{{friend.login}}"><user-avatar uuid="{{friend.id}}"></user-avatar></a>
   <div class="login">{{friend.login}}</div>
   
   <div ng-if="friend.online == true" class="online-status">
