@@ -27,7 +27,7 @@ module.exports = function(config) {
       'bower_components/angular-route/angular-route.js',
       'bower_components/Materialize/bin/materialize.js',
       'bower_components/pubnub/web/dist/pubnub.min.js',
-      'bower_components/pubnub-angular/dist/pubnub-angular-3.1.1.min.js',
+      'bower_components/pubnub-angular/dist/pubnub-angular.min.js',
       'bower_components/lodash/lodash.js',
       'bower_components/ng-notify/src/scripts/ng-notify.js',
       'bower_components/satellizer/satellizer.js',
