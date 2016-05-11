@@ -6,7 +6,7 @@
     "angular-route": "^1.4.0",
     "Materialize": "materialize#^0.97.5",
     "pubnub": "^3.7.21",
-    "pubnub-angular": "^3.1.1",
+    "pubnub-angular": "^3.2.1",
     "jquery": "^2.2.0",
     "lodash": "^4.0.1",
     "ng-notify": "^0.8.0",
