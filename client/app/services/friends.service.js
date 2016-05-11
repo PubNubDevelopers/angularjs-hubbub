@@ -14,7 +14,7 @@ angular.module('app')
 */
 
   var fetchFriends = function(){
-    return $http({method: 'GET',  url: config.SERVER_URL+"api/friends"})
+    return $http({method: 'GET',  url: config.SERVER_URL+"api/friends/"})
   }
 
 /*
@@ -88,7 +88,7 @@ var mergeOnlineStatusToFriendList = function(friends, onlineFriends){
 
   var subscribeToFriendsPresenceEvents = function() {
     // We listen to Presence events :
-    $rootScope.$on(Pubnub.getPresenceEventNameFor(self.channel_group), function (ngEvent, presenceEvent) {
+    $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel_group), function (ngEvent, presenceEvent) {
       updateOnlineFriendList(presenceEvent);
     });
 
