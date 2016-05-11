@@ -14,7 +14,7 @@ angular.module('app')
 */
 
   var fetchFriends = function(){
-    return $http({method: 'GET',  url: config.SERVER_URL+"api/friends"})
+    return $http({method: 'GET',  url: config.SERVER_URL+"api/friends/"})
   }
 
 /*
