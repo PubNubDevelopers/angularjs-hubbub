@@ -6,8 +6,8 @@ angular.module('app')
                     subscribe_key: config.PUBNUB_SUBSCRIBE_KEY,
                     origin: 'pubsub.pubnub.com',
                     ssl: true,
-                    heartbeat: 40,
-                    heartbeat_interval: 60
+                    heartbeat: 200,
+                    heartbeat_interval: 98
     });
 
   }])
