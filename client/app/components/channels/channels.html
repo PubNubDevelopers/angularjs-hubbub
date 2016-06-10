@@ -1,3 +1,6 @@
 <ul class="channels">
-	<li><i class="tiny material-icons">chat</i><a href="#/conversations/channel/general">Channel #GENERAL</a></li>
+	<li ng-repeat="channel in channels">
+		<i class="tiny material-icons">chat</i>
+		<a href="#/conversations/channel/{{channel.parameterized_name}}">{{channel.name}}</a>
+	</li>
 </ul>
