@@ -4,30 +4,35 @@ angular.module('app').directive('conversation', function($rootScope) {
     replace: true,
     templateUrl: 'components/conversation/conversation.html',
     scope: true, 
-    controller: function($scope, $state, Friends, Conversations, $stateParams, Pubnub, TypingIndicator){
+    controller: function($scope, $state, Friends, Conversations, $stateParams, Pubnub, TypingIndicator, UsersTyping){
 
-
+      $scope.conversationType = $stateParams.type
       $scope.conversation = null;
       $scope.friend = null;
+      $scope.conversationChannel = null;
+
 
       if ($stateParams.type == 'channel'){
 
-        $scope.conversation = Conversations.$channel('conversation_channel_'+ $stateParams.name);
+        $scope.conversationChannel = 'conversation_channel_'+ $stateParams.name
+        $scope.conversation = Conversations.$channel($scope.conversationChannel);
+        $scope.conversationChannel =  'conversation_channel_'+ $stateParams.name
 
       }
       else{
 
         $scope.friend = Friends.find({login: $stateParams.name});
-        $scope.conversation = Conversations.$channel($scope.friend.direct_conversation_channel);
+        $scope.conversationChannel = $scope.friend.direct_conversation_channel;
+        $scope.conversation = Conversations.$channel($scope.conversationChannel);
 
       }
+
+      $scope.usersTyping = UsersTyping.$channel($scope.conversationChannel+'-pnpres');
 
       
       if (_.isEmpty($scope.conversation)){
            $scope.conversation.$load(10)
          }
-
-      //$scope.typingIndicator = new TypingIndicator($scope.channel)
 
     } 
   };
