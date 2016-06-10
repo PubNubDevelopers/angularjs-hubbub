@@ -88,7 +88,7 @@ var mergeOnlineStatusToFriendList = function(friends, onlineFriends){
 
   var subscribeToFriendsPresenceEvents = function() {
     // We listen to Presence events :
-    $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel_group), function (ngEvent, presenceEvent) {
+    $rootScope.$on(Pubnub.getMessageEventNameFor(self.channel_group+'-pnpres'), function (ngEvent, presenceEvent) {
       updateOnlineFriendList(presenceEvent);
     });
 
