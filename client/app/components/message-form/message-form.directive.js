@@ -10,7 +10,6 @@ angular.module('app').directive('messageForm', function() {
     
     controller: function($scope, currentUser){
 
-
       $scope.sendMessage = function(){
 
           if(_.isEmpty($scope.messageContent)){
