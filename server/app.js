@@ -196,7 +196,7 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
                 })
                 
                 Q.all([
-                        createOwnUserConversationsPresenceChannelGroup(req.user, friends),
+                        createOwnUserConversationsChannelGroup(req.user, friends),
                         createOwnUserFriendsPresenceChannelGroup(req.user, friends),
                         allowUserToPublishToConversationChannels(req.user, friends)
                       ]).then(function(){
@@ -218,6 +218,50 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
 
     }); 
 
+  });
+
+  /*
+ |--------------------------------------------------------------------------
+ | GET /api/conversation
+ |--------------------------------------------------------------------------
+*/
+
+  app.get('/api/conversations', ensureAuthenticated, function(req, res) {
+
+    var conversations = [
+      { name: 'General', parameterized_name: 'general', type: 'channel', channel: 'conversation_channel_general' },
+      { name: 'Random', parameterized_name: 'random', type: 'channel', channel: 'conversation_channel_random' },
+      { name: 'Questions', parameterized_name: 'questions', type: 'channel', channel: 'conversation_channel_questions' },
+      { name: 'AngularJS', parameterized_name: 'angularjs', type: 'channel', channel: 'conversation_channel_angularjs' },
+      { name: 'PubNub', parameterized_name: 'pubnub', type: 'channel', channel: 'conversation_channel_pubnub' }
+    ]
+
+    conversationsChannels = _.map(conversations, function(conversation){ return conversation.channel });
+
+    // Allow the user to publish in the channels
+    var allowUserToPublishInChannelsPromise =  grant({
+              channel: conversationsChannels, 
+              auth_key: req.user.oauth_token, 
+              read: true, 
+              write: true,
+              ttl: 0
+            })
+
+
+    Q.all([ 
+      addConversationsToConversationChannelGroup(req.user, conversationsChannels), 
+      allowUserToPublishInChannelsPromise
+    ])
+    .then(function(){
+
+      res.status(200).send(conversations);
+
+    })
+    .catch(function(){
+      
+      res.status(500).send();
+    
+    });
   });
 
 
@@ -269,8 +313,6 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       'readOnly': [],
       'writeOnly': [],
       'readAndWrite': [
-                        'conversation_channel_general',
-                        'conversation_channel_general-pnpres',
                         'user_presence_' + user._id,
                         'user_presence_' + user._id + '-pnpres',
                       ]
@@ -369,9 +411,63 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
   };
 
 
+
+  /*
+   |--------------------------------------------------------------------------
+   | Add the given conversations to the user conversation channel group
+   |--------------------------------------------------------------------------
+  */
+  
+  var addConversationsToConversationChannelGroup = function(user, conversations){
+
+      var deferred = Q.defer();
+
+      // The name of the channel used by the user to group all the conversations
+      var user_conversation_channel_group = 'conversations_' + user._id;
+
+      pubnub.channel_group_add_channel({
+        callback: function(res){ deferred.resolve(res)},
+        error: function(res){ deferred.reject(res) },
+        channel_group: user_conversation_channel_group,
+        channel: conversations
+      }); 
+
+      return deferred.promise;
+
+  }
+
+
   /*
    |--------------------------------------------------------------------------
    | Create the own user friends channel group
+   |--------------------------------------------------------------------------
+  */
+
+  // All the friends are automatically publishing their presence status to their own presence channel called userID_presence
+  // We aggregate their presence events in the own user channel group called userID_friends_presence
+  // The user subscribe to this channel group to to see his friends online/offline status be updated in realtime. 
+  
+  var createOwnUserFriendsPresenceChannelGroup = function(user, friends){
+
+      var deferred = Q.defer();
+        
+      var friends_presence_channels = _.map(friends, function(friend){ return "user_presence_" + friend.id });
+      var user_friends_presence_channel = 'friends_presence_' + user._id
+
+      pubnub.channel_group_add_channel({
+        callback: function(res){ deferred.resolve(res) },
+        error: function(res){ deferred.reject(res) },
+        channel_group: user_friends_presence_channel,
+        channel: friends_presence_channels
+      }); 
+
+      return deferred.promise;
+
+  }
+
+  /*
+   |--------------------------------------------------------------------------
+   | Create the own user channel group
    |--------------------------------------------------------------------------
   */
 
@@ -407,7 +503,7 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
   // We aggregate their presence events in the own user channel group called userID_friends_presence
   // The user subscribe to this channel group to to see his friends online/offline status be updated in realtime. 
   
-  var createOwnUserConversationsPresenceChannelGroup = function(user, friends){
+  var createOwnUserConversationsChannelGroup = function(user, friends){
 
       var deferred = Q.defer();
       
@@ -415,8 +511,6 @@ db.users = new Datastore({ filename: 'db/users.db', autoload: true });
       var direct_conversation_channels = _.map(friends, function(friend){
         return getDirectConversationChannelName(user._id, friend.id) 
       });
-
-      direct_conversation_channels.push('conversation_channel_general');
 
       // The name of the channel used by the user to group all the conversations
       var user_conversation_channel_group = 'conversations_' + user._id;
