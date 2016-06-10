@@ -4,89 +4,60 @@ angular.module('app')
   
   // Aliasing this by self so we can access to this trough self in the inner functions
   var self = this;
-  // List of uuids that are typing
-  this.usersTyping = []
-  this.channel = 'conversation_channel_general';
-  
-  // Typing indicator of the current user
-  this.isCurrentUserTyping = false ;
 
-  var init = function(){
-    
-    $rootScope.$on(Pubnub.getPresenceEventNameFor(self.channel), function (ngEvent, presenceEvent) {
-      updateTypingUserList(presenceEvent);
-    });
+  // Name of the channel the current user is typing in
+  // Null if he is not typing
 
-  }
+  this.channelUserIsTyping = false ;
 
-  var updateTypingUserList = function(event){
 
-      // We don't want to receive our own presence events
-      if(event['uuid'].toString() === currentUser.get().id.toString()) return;
-
-      // Add people typing
-      if(event['action'] === 'state-change' && event['data']['isTyping']){
-
-          // Check if not already in the array
-          if(!_.find(self.usersTyping, { uuid: event['uuid']}))
-            self.usersTyping.push({uuid: event['uuid']});
-
-      }
-      // Remove people typing
-      else if(  ( event['action'] === 'state-change' && event['data']['isTyping'] === false ) || 
-                  event['action'] === 'timeout'                                               || 
-                  event['action'] === 'leave' ){
-
-          _.remove(self.usersTyping, function(user) {
-            return user['uuid'] === event['uuid'];
-          });
-      }
-
-      $rootScope.$digest();
+  var channelUserIsTyping = function(){
+    return self.channelUserIsTyping;
   };
 
-
-  var getUsersTyping = function(uuid){
-    return self.usersTyping;
+  // Indicates if the user is currently typing in this channel
+  var isCurrentUserTyping = function(channel){
+    return self.channelUserIsTyping == channel
   };
 
-  var isCurrentUserTyping = function(){
-    return self.isCurrentUserTyping;
-  }
+  var setTypingState = function(channel, isTyping){
 
-
-  var setTypingState = _.debounce(function(isTyping){
-
-        self.isCurrentUserTyping = isTyping;
         Pubnub.state({
-          channel: self.channel,
+          channel: channel,
           uuid: currentUser.get().id,
-          state: { isTyping: self.isCurrentUserTyping }
+          state: { isTyping: isTyping }
         });
+  };
 
-  },400);
 
+  var startTyping = function(channel){
 
-  var startTyping = function(){
+    if(self.channelUserIsTyping){
+      setTypingState(self.channelUserIsTyping,false)
+      self.channelUserIsTyping = null;
+      console.log('stopTyping', self.channelUserIsTyping)
+    }
 
-    setTypingState(true)
+    setTypingState(channel,true)
 
   };
 
 
-  var stopTyping = function(){
+  var stopTyping = function(channel){
 
-    setTypingState(false)
+    if(self.channelUserIsTyping){
+      setTypingState(self.channelUserIsTyping,false)
+      self.channelUserIsTyping = null;
+    }
+
+    setTypingState(channel,false)
 
   };
-
-  init();
 
   return {
-    getUsersTyping: getUsersTyping,
     startTyping: startTyping,
     stopTyping: stopTyping,
-    isCurrentUserTyping: isCurrentUserTyping
+    channelUserIsTyping: channelUserIsTyping,
   } 
 
 }]);

@@ -1,11 +1,12 @@
 <div class="conversation">
 
-	<online-user-list ng-if="conversation.$channel() == 'conversation_channel_general'"></online-user-list>
-	<conversation-name user="friend" ng-if="conversation.$channel() != 'conversation_channel_general'"></conversation-name>
+	<online-user-list ng-if="conversationType == 'channel'"></online-user-list>
+
+	<conversation-name user="friend" ng-if="conversationType != 'channel'"></conversation-name>
 
 	<message-list messages="conversation"></message-list>
 
-	<typing-indicator-box ng-if="conversation.$channel() == 'conversation_channel_general'"></typing-indicator-box>
+	<typing-indicator-box users-typing="usersTyping"></typing-indicator-box>
 
 	<message-form conversation="conversation"></message-form>
 </div>

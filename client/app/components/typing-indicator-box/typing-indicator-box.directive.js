@@ -4,13 +4,7 @@ angular.module('app').directive('typingIndicatorBox', function($rootScope, Typin
     replace: true,
     templateUrl: 'components/typing-indicator-box/typing-indicator-box.html',
     scope: {
-      typingIndicator: "="
-    },
-
-    controller: function($scope){
-      
-      $scope.usersTyping = TypingIndicator.getUsersTyping();
-
+      usersTyping: "="
     }
   };
 });
