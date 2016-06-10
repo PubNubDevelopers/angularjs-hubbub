@@ -44,7 +44,6 @@ angular.module('app')
 	var clientSignout = function(){
 
   		var channels = [	
-								'conversation_channel_general', 
 								'user_presence_' + currentUser.get().id.toString()
 						]
 
@@ -71,7 +70,6 @@ angular.module('app')
     	Pubnub.auth($auth.getToken())
 
     	var channels = [	
-								  'conversation_channel_general', 
 								  // Automatically publish presence events on the own user presence channel
 								  'user_presence_' + currentUser.get().id.toString()  
     					]
