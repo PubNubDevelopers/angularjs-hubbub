@@ -12,9 +12,6 @@ angular
       }
     };
 
-
-
-
     $stateProvider
     .state('login', {
       url: "/login",
@@ -32,33 +29,40 @@ angular
     })
     .state('chat.conversation', {
       url: "/:type/:name",
-      template: '<conversation></conversation>',
-      resolve: {
-
-      }
+      template: '<conversation></conversation>'    
     })
     .state('logout',{
         url: '/logout', 
         template: null,
-        controller: function(AuthenticationService, $location, ngNotify, $window, $state){          
-              
-            AuthenticationService.logout().catch(function(error) {
+        controller: function(AuthenticationService, $location, ngNotify, $window, $state, $auth){          
+            
+            if(!$auth.isAuthenticated()){
+              $location.path('/login');
+            }
+            else{
+
+              AuthenticationService.logout().catch(function(error) {
               // The logging out process failed on the server side
               if(error.status == 500){
                 ngNotify.set('Logout failed.', { type: 'error' }); 
               }    
             }).finally(function(){
 
-              // refresh the all state of the application
+              
               $location.path('/login');
+              $window.location.reload()
 
             });
+
+          }
+
             
         }
       })
       $urlRouterProvider.when('/', '/conversations/channel/general');
       // For any unmatched url, redirect to /login
       $urlRouterProvider.otherwise("/login");
+
 
 
   })
