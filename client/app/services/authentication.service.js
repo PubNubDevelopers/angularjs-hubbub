@@ -1,6 +1,6 @@
 angular.module('app')
-.factory('AuthenticationService', ['$rootScope','Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory', '$http', 'config', '$location',
- function AuthenticationService($rootScope,Pubnub, ngNotify, $auth, currentUser, $cacheFactory, $http, config, $location) {
+.factory('AuthenticationService', ['$rootScope','Pubnub','ngNotify', '$auth','currentUser', '$cacheFactory', '$http', 'config', '$location', 'NotificationService',
+ function AuthenticationService($rootScope,Pubnub, ngNotify, $auth, currentUser, $cacheFactory, $http, config, $location, NotificationService) {
   
 	var whenDisconnected = function(){
 	  ngNotify.set('Connection lost. Trying to reconnect...', {
@@ -92,7 +92,10 @@ angular.module('app')
 	          noheresync: true,
 	          triggerEvents: ['callback']
 
-	    });    	
+	    });
+
+	    NotificationService.init();
+
 	    return true;
 
 	  });

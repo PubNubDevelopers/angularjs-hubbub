@@ -20,7 +20,6 @@ angular.module('app')
 
             // Check if not already in the array
             if(!_.find(this.$messages, { uuid: event['uuid']}))
-              console.log('Adding', event['uuid'])
               this.$messages.push({uuid: event['uuid']});
 
         }
