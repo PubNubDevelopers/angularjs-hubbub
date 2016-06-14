@@ -1,8 +1,9 @@
 angular.module('app')
-.factory('Conversations', ['$rootScope', 'currentUser', '$pubnubChannelGroup',
- function ConversationsService($rootScope, currentUser,$pubnubChannelGroup) {
+.factory('Conversations', ['$rootScope', 'currentUser', '$pubnubChannelGroup', 'Pubnub',
+ function ConversationsService($rootScope, currentUser,$pubnubChannelGroup, Pubnub) {
     
     var channelGroup = 'conversations_' + currentUser.get().id.toString();
+
     return $pubnubChannelGroup(channelGroup,{
       channelExtension: {
         sendMessage: function(message){
