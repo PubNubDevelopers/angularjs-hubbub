@@ -35,6 +35,7 @@ module.exports = function(config) {
       'bower_components/ngToast/dist/ngToast.js',
       'bower_components/angular-ui-router/release/angular-ui-router.js',
       'bower_components/angular-loading-bar/build/loading-bar.js',
+      'bower_components/push.js/push.js',
       'bower_components/angular-mocks/angular-mocks.js',
       // endbower
       "app/scripts/**/*.js",
