@@ -35,7 +35,6 @@ angular.module('app')
     if(self.channelUserIsTyping){
       setTypingState(self.channelUserIsTyping,false)
       self.channelUserIsTyping = null;
-      console.log('stopTyping', self.channelUserIsTyping)
     }
 
     setTypingState(channel,true)
