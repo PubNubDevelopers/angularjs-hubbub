@@ -26,7 +26,8 @@ angular
       resolve: { 
             currentUser: function(currentUser){ return currentUser.fetch() },
             requireAuthentication: requireAuthentication,
-            friends: function(Friends, requireAuthentication){ return Friends.all() }
+            friends: function(Friends, requireAuthentication){ return Friends.all() },
+            conversation: function(ConversationList, requireAuthentication){ return ConversationList.all() }
           }
     })
     .state('chat.conversation', {
@@ -50,29 +51,14 @@ angular
 
               // refresh the all state of the application
               $location.path('/login');
-              $window.location.reload()
 
             });
             
         }
       })
-       $urlRouterProvider.when('/', '/conversations/channel/general');
+      $urlRouterProvider.when('/', '/conversations/channel/general');
       // For any unmatched url, redirect to /login
       $urlRouterProvider.otherwise("/login");
-
-   
-
-
-
-
-    //  .when('/conversation/:type/:name', {
-    //    templateUrl: 'views/chat.html',
-    //    reloadOnSearch: false,
-    //    resolve: { 
-    //                requireAuthentication: requireAuthentication
-    //              },
-    // 
-    //  })
 
 
   })
