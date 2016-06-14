@@ -20,20 +20,22 @@ angular.module('app')
     return self.channelUserIsTyping == channel
   };
 
-  var setTypingState = function(channel, isTyping){
+  var setTypingState = _.debounce(function(channel, isTyping){
 
         Pubnub.state({
           channel: channel,
           uuid: currentUser.get().id,
           state: { isTyping: isTyping }
         });
-  };
+
+  },400);
 
 
   var startTyping = function(channel){
 
+    setTypingState(self.channelUserIsTyping,false)
     if(self.channelUserIsTyping){
-      setTypingState(self.channelUserIsTyping,false)
+      
       self.channelUserIsTyping = null;
     }
 
@@ -44,8 +46,8 @@ angular.module('app')
 
   var stopTyping = function(channel){
 
+    setTypingState(self.channelUserIsTyping,false)
     if(self.channelUserIsTyping){
-      setTypingState(self.channelUserIsTyping,false)
       self.channelUserIsTyping = null;
     }
 
