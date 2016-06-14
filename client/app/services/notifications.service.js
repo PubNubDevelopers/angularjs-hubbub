@@ -2,10 +2,12 @@ angular.module('app')
 .factory('NotificationService', ['$rootScope', 'currentUser', 'Pubnub',
  function NotificationService($rootScope, currentUser, Pubnub) {
     
-    var channelGroup = 'conversations_' + currentUser.get().id.toString();
-
+    
     var init = function(){
+
+        var channelGroup = 'conversations_' + currentUser.get().id.toString();
         var eventName = Pubnub.getMessageEventNameFor(channelGroup);
+        
         $rootScope.$on(eventName, function(ngEvent, message, env){
             let channel = env[3];
 

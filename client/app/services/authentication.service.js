@@ -44,12 +44,14 @@ angular.module('app')
 	var clientSignout = function(){
 
   		var channels = [	
-								'user_presence_' + currentUser.get().id.toString()
+								'user_presence_' + currentUser.get().id.toString(),
+								'user_presence_' + currentUser.get().id.toString()+'-pnpres',
 						]
 
 		var channel_groups = [ 
     								'friends_presence_' + currentUser.get().id.toString() +'-pnpres',
-    								'conversations_' + currentUser.get().id.toString()												
+    								'conversations_' + currentUser.get().id.toString(),	
+    								'conversations_' + currentUser.get().id.toString() +'-pnpres'											
     						 ]
 
 		Pubnub.unsubscribe({ channel: channels });
@@ -69,10 +71,16 @@ angular.module('app')
   		Pubnub.set_uuid(currentUser.get().id) 
     	Pubnub.auth($auth.getToken())
 
-    	var channels = [	
-								  // Automatically publish presence events on the own user presence channel
-								  'user_presence_' + currentUser.get().id.toString()  
-    					]
+  		var channels = [	
+								'user_presence_' + currentUser.get().id.toString(),
+								'user_presence_' + currentUser.get().id.toString()+'-pnpres',
+						]
+
+		var channel_groups = [ 
+    								'friends_presence_' + currentUser.get().id.toString() +'-pnpres',
+    								'conversations_' + currentUser.get().id.toString(),	
+    								'conversations_' + currentUser.get().id.toString() +'-pnpres'											
+    						 ]
 
 	    Pubnub.subscribe({
 	          channel: channels,
@@ -80,12 +88,8 @@ angular.module('app')
 	          reconnect : whenReconnected,
 	          error: whenError,
 	          noheresync: true, 
-	          triggerEvents: true
+	          triggerEvents: ['callback']
 	    });
-
-	    var channel_groups = [ 
-    						    'friends_presence_' + currentUser.get().id.toString() +'-pnpres'														
-    						 ]
 
 	    Pubnub.subscribe({
 	          channel_group: channel_groups,
