@@ -44,14 +44,12 @@ angular.module('app')
 	var clientSignout = function(){
 
   		var channels = [	
-								'user_presence_' + currentUser.get().id.toString(),
-								'user_presence_' + currentUser.get().id.toString()+'-pnpres',
+								'user_presence_' + currentUser.get().id.toString()
 						]
 
 		var channel_groups = [ 
     								'friends_presence_' + currentUser.get().id.toString() +'-pnpres',
-    								'conversations_' + currentUser.get().id.toString(),	
-    								'conversations_' + currentUser.get().id.toString() +'-pnpres'											
+    								'conversations_' + currentUser.get().id.toString()										
     						 ]
 
 		Pubnub.unsubscribe({ channel: channels });
@@ -72,14 +70,11 @@ angular.module('app')
     	Pubnub.auth($auth.getToken())
 
   		var channels = [	
-								'user_presence_' + currentUser.get().id.toString(),
-								'user_presence_' + currentUser.get().id.toString()+'-pnpres',
+								'user_presence_' + currentUser.get().id.toString() 
 						]
 
 		var channel_groups = [ 
-    								'friends_presence_' + currentUser.get().id.toString() +'-pnpres',
-    								'conversations_' + currentUser.get().id.toString(),	
-    								'conversations_' + currentUser.get().id.toString() +'-pnpres'											
+    								'friends_presence_' + currentUser.get().id.toString() +'-pnpres'										
     						 ]
 
 	    Pubnub.subscribe({
@@ -88,7 +83,7 @@ angular.module('app')
 	          reconnect : whenReconnected,
 	          error: whenError,
 	          noheresync: true, 
-	          triggerEvents: ['callback']
+	          triggerEvents: true
 	    });
 
 	    Pubnub.subscribe({
