@@ -23,12 +23,13 @@ angular.module('app').directive('messageList', function($rootScope, $anchorScrol
 
         //ngNotify.set('Loading previous messages...','success');
 
-        var currentMessage = scope.messages[0].uuid;
+        var currentMessage = scope.messages[0].uuid.toString();
 
           scope.messages.$load(20).then(function(){
 
           // Scroll to the previous message 
-          $anchorScroll(currentMessage);
+          // Because
+          _.defer( function(){ $anchorScroll(currentMessage) });
 
         });
 
