@@ -1,8 +1,8 @@
 <div class="conversation">
 
-	<online-user-list ng-if="conversationType == 'channel'"></online-user-list>
+	<conversation-name-channel ng-if="conversationType == 'channel'"></conversation-name-channel>
 
-	<conversation-name user="friend" ng-if="conversationType != 'channel'"></conversation-name>
+	<conversation-name-direct user="friend" ng-if="conversationType != 'channel'"></conversation-name-direct>
 
 	<message-list messages="conversation"></message-list>
 
