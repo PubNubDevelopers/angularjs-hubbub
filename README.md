@@ -4,7 +4,6 @@ This is a full AngularJS chat app built with PubNub
 
 
 ![AngularJS Hubbub Screenshot](http://cl.ly/1p3A0q2m0L0j/Hubbub%20screen%20shot.png)
-![AngularJS Hubbub Screenshot](http://f.cl.ly/items/2a0l293o150F2K071U1F/Screen%20Shot%202016-05-11%20at%204.59.16%20AM.png)
 
 ## Features
 
@@ -35,7 +34,7 @@ Learn how to build this chat app by following these easy-to-follow tutorials:
 - [Displaying a Typing Indicator in Your AngularJS Chat App Using Custom State
 API](https://www.pubnub.com/blog/2016-03-21-displaying-a-typing-indicator-in-your-angularjs-chat-app/)
 - [AngularJS User Authentication with OAuth 2.0 and Access Manager](https://www.pubnub.com/blog/2016-04-20-angularjs-user-authentication-with-oauth-2-access-manager/)
-
+- [Building a Friend List using Advanced Channel Groups](https://www.pubnub.com/blog/2016-05-19-angularjs-building-a-friend-list-using-advanced-channel-groups/)
 
 ## Quick start instructions
 
@@ -84,13 +83,14 @@ Run `grunt build` for building the production app
 
 ### Running the server
 
-- Insert your PubNub keys, OAuth keys and server configuration in a `server/config.json` file. <br />
+- Insert your PubNub keys, OAuth keys and server configuration in a `server/.env` file. <br />
 There is an example in the `server/.sample.env` or below is how this file looks like:
 
 ```
 PUBNUB_SUBSCRIBE_KEY=sub-c-61b076f2-fed0-...............
 PUBNUB_PUBLISH_KEY=pub-c-d22410bf-edc6-44fb-............
 PUBNUB_SECRET_KEY=sec-c-MGM4ZjJkNTYtNzQ1Zi0................
+SERVER_PUBNUB_AUTH_KEY=....ANY-RANDOM-STRING.....
 GITHUB_CLIENT_ID=1e439e............
 GITHUB_CLIENT_SECRET=3c69fde2d90e3............
 GITHUB_REDIRECT_URI=http://localhost:9000/
